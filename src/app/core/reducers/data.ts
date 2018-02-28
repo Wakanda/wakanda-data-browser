@@ -3,11 +3,21 @@ import { DataActionTypes, DataAction } from '../actions/data';
 export interface State {
     query: string;
     tableName: string;
+    pageSize: number;
+    start: number;
+    length: number;
+    rows: Array<any>;
+    columns: Array<string>;
 }
 
 const initialState: State = {
     query: "",
-    tableName: ""
+    tableName: "",
+    pageSize: 40,
+    start: 0,
+    length: 0,
+    rows: [],
+    columns: []
 };
 
 export function reducer(
@@ -34,9 +44,32 @@ export function reducer(
                 tableName: action.payload,
             };
 
+        case DataActionTypes.ChangeOptions:
+            return {
+                ...state,
+                pageSize: action.payload.pageSize
+            };    
+
+        case DataActionTypes.UpdateData:
+            return {
+                ...state,
+                rows: action.payload
+            };      
+
+        case DataActionTypes.UpdateColumns:
+            return {
+                ...state,
+                columns: action.payload
+            };        
+
         default:
             return state;
     }
 }
 
 export const getQuery = (state: State) => state.query;
+export const getPageSize = (state: State) => state.pageSize;
+export const getLength = (state: State) => state.length;
+export const getRows = (state: State) => state.rows;
+export const getTableName = (state: State) => state.tableName;
+export const getColumns = (state: State) => state.columns;

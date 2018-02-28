@@ -3,17 +3,17 @@
   <button mat-button *ngIf="query$ | async" matSuffix mat-icon-button aria-label="Clear" (click)="resetQuery()">
     <mat-icon>close</mat-icon>
   </button>
-  <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="fetchData()">
+  <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="refreshResult()">
     <mat-icon>refresh</mat-icon>
   </button>
 </mat-form-field>
-<mat-paginator #paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)">
+<mat-paginator #paginator [length]="length$ | async" [pageSize]="pageSize$ | async" [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)">
 </mat-paginator>
 <mat-table #table [dataSource]="data" *ngIf="data">
-  <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+  <ng-container *ngFor="let column of columns$ | async" [matColumnDef]="column">
     <mat-header-cell *matHeaderCellDef>{{ column }}</mat-header-cell>
     <mat-cell *matCellDef="let row">{{ row[column] }}</mat-cell>
   </ng-container>
-  <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: columns;"></mat-row>
+  <mat-header-row *matHeaderRowDef="columns$ | async"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: columns$ | async"></mat-row>
 </mat-table>

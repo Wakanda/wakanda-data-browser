@@ -30,3 +30,23 @@ export const getQuery = createSelector(
     getDataState,
     fromData.getQuery
 );
+export const getPageSize = createSelector(
+    getDataState,
+    fromData.getPageSize
+);
+export const getLength = createSelector(
+    getDataState,
+    fromData.getLength
+);
+export const getRows = createSelector(
+    getDataState,
+    fromData.getRows
+);
+export const getTableName = createSelector(
+    getDataState,
+    fromData.getTableName
+);
+export const getColumns = createSelector(
+    getDataState,
+    fromData.getColumns
+);
