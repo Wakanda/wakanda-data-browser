@@ -1,44 +1,28 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  MatSidenavModule,
-  MatButtonModule,
-  MatListModule,
-  MatTableModule,
-  MatPaginatorModule,
-  MatFormFieldModule,
-  MatIconModule,
-  MatInputModule
-} from '@angular/material';
-import { AppComponent } from './app.component';
+import { FormsModule } from '@angular/forms';
+import { StoreModule } from '@ngrx/store';
+import { MaterialModule } from './material';
 
-@NgModule({
-  exports: [
-    MatSidenavModule,
-    MatButtonModule,
-    MatListModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule
-  ]
-})
-export class AngularMaterialModule {}
+import { Wakanda } from './wakanda';
+import { AppComponent } from './core/containers/app/app.component';
+import { DataTableComponent } from './core/components/data-table/data-table.component';
+import { reducers } from './reducers';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    DataTableComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    AngularMaterialModule,
-    FormsModule
+    StoreModule.forRoot(reducers),
+    MaterialModule,
+    FormsModule,    
   ],
-  providers: [],
+  providers: [Wakanda],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

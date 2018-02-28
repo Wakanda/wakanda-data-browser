@@ -1,0 +1,18 @@
+<mat-sidenav-container class="app-container">
+  <mat-sidenav #sidenav mode="side" [opened]="showSidenav$ | async">
+    <button mat-button matSuffix mat-icon-button aria-label="Hide" (click)="toggleSideNav()" *ngIf="showSidenav$ | async">
+      <mat-icon title="Hide">keyboard_arrow_left</mat-icon>
+    </button>
+    <mat-list>
+      <h1>Dataclasses</h1>
+      <mat-list-item *ngFor="let table of tables" (click)="switchTable(table)" class="table"> {{table}} </mat-list-item>
+    </mat-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <button mat-button matSuffix mat-icon-button aria-label="Show" (click)="toggleSideNav()" *ngIf="!(showSidenav$ | async)">
+      <mat-icon title="Show">keyboard_arrow_right</mat-icon>
+    </button>
+    <app-data-table></app-data-table>
+  </mat-sidenav-content>
+</mat-sidenav-container>
