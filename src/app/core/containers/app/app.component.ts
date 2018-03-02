@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { WakandaClient } from 'wakanda-client/browser/no-promise';
 import { MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
@@ -14,54 +14,28 @@ import { Wakanda } from '../../../wakanda';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  @ViewChild('paginator') paginator;
-
   showSidenav$: Observable<boolean>;
 
   title = 'Wakanda Data Browser';
   catalog;
-  tables;
-  currentDataclass;
   data;
   columns = [];
+  tables = [];
 
-  pageSizeOptions = [20, 40, 80, 160];
-  length = 0;
-  start = 0;
-  pageSize = 60;
-
-  query = "";
-  lastQuery = "";
+  length$ = 0;
+  pageSize$: Observable<number>;
+  currentTable$: Observable<string>;
 
   constructor(private store: Store<fromRoot.State>, private wakanda: Wakanda) {
     this.showSidenav$ = this.store.pipe(select(fromRoot.getShowSidenav));
+
     this.wakanda.getCatalog().then(c => {
       this.catalog = c;
       this.tables = Object.keys(c);
-      this.currentDataclass = this.tables[0];
-      this.tables.length && this.fetchData();
+      if (this.tables.length) {
+        this.switchTable(this.tables[0]);        
+      }
     });
-  }
-
-  fetchData() {
-    let dataclass = this.catalog[this.currentDataclass];
-
-    if (this.lastQuery !== this.query) {
-      this.start = 0;
-      this.paginator.firstPage();
-    }
-
-    dataclass.query({
-      filter: this.query,
-      pageSize: this.pageSize,
-      start: this.start
-    })
-      .then(response => {
-        this.columns = dataclass.attributes.map(attr => attr.name);
-        this.data = new MatTableDataSource<Object>(response.entities);
-        this.pageSize = response._pageSize;
-        this.length = response._count;
-      });
   }
 
   switchTable(tableName) {
