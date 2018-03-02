@@ -12,7 +12,6 @@ export function reducer(
     state: State = initialState,
     action: LayoutAction
 ): State {
-    console.log(state, action);
     switch (action.type) {
         case LayoutActionTypes.CloseSidenav:
             return {

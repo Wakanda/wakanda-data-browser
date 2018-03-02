@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
+
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/withLatestFrom';
+import 'rxjs/add/observable/fromPromise';
 
 import { State } from '../../reducers';
 import { Wakanda } from '../../wakanda';
@@ -14,6 +16,7 @@ import {
     ResetQuery,
     SetQuery,
     FetchData,
+    FetchColumns,
     ChangeOptions,
     UpdateData,
     UpdateColumns,
@@ -23,55 +26,68 @@ import {
 
 @Injectable()
 export class DataEffects {
-    @Effect({ dispatch: false })
+    @Effect()
     fetch$ = this.actions$
-        .ofType<FetchData>(DataActionTypes.FetchData)
+        .ofType<FetchData | SetQuery | ResetQuery | SwitchTable | ChangeOptions>(
+        DataActionTypes.FetchData,
+        DataActionTypes.SetQuery,
+        DataActionTypes.ResetQuery,
+        DataActionTypes.SwitchTable,
+        DataActionTypes.ChangeOptions,
+    )
+        .switchMap(() => {
+            return Observable.fromPromise(this.wakanda.getCatalog());
+        })
         .withLatestFrom(this.store$)
-        .map((args) => {
-            let state: State = args[1];
+        .switchMap(([ds, state]: [any, State]) => {
             let query = state.data.query;
             let tableName = state.data.tableName;
             let pageSize = state.data.pageSize;
             let start = state.data.start;
 
-            if(!tableName) {
+            if (!tableName) {
                 return;
             }
 
-            this.wakanda.getCatalog()
-                .then(ds => {
-                    ds[state.data.tableName].query({
-                        filter: query,
-                        pageSize: pageSize,
-                        start:start
-                    })
-                        .then(response => {
-                            this.store$.dispatch(new UpdateData(response.entities));
-                            this.store$.dispatch(new ChangeOptions({pageSize: response._pageSize, start, length: response._count}));
-                        });
-                });
+            return Observable.fromPromise(ds[state.data.tableName].query({
+                filter: query,
+                pageSize: pageSize,
+                start: start
+            }));
+        })
+        .map((response: any) => {
+            return new UpdateData({
+                entities: response.entities,
+                length: response._count
+            });
         });
 
-    @Effect({ dispatch: false })
+    @Effect()
+    SwitchTable = this.actions$
+        .ofType<SwitchTable>(DataActionTypes.SwitchTable)
+        .map(() => {
+            return new FetchColumns();
+        });
+
+    @Effect()
     fetchColumns$ = this.actions$
-        .ofType<FetchData>(DataActionTypes.FetchColumns)
+        .ofType<FetchColumns>(DataActionTypes.FetchColumns)
+        .switchMap(() => {
+            return Observable.fromPromise(this.wakanda.getCatalog());
+        })
         .withLatestFrom(this.store$)
-        .map((args) => {
-            let state: State = args[1];
+        .map(([ds, state]: [any, State]) => {
             let query = state.data.query;
             let tableName = state.data.tableName;
             let pageSize = state.data.pageSize;
             let start = state.data.start;
 
-            if(!tableName) {
+            if (!tableName) {
                 return;
             }
 
-            this.wakanda.getCatalog()
-                .then(ds => {
-                    let columns = ds[state.data.tableName].attributes.map(attr => attr.name);
-                    this.store$.dispatch(new UpdateColumns(columns));
-                });
+            let columns = ds[state.data.tableName].attributes;
+            return new UpdateColumns(columns);
         });
 
     constructor(

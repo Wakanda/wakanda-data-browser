@@ -1,0 +1,19 @@
+<div *ngIf="column.kind=='storage'">
+    <div *ngIf="column.type==='bool'; else notBoolean">
+        <mat-checkbox [checked]="value" disabled="true"></mat-checkbox>
+    </div>
+    <ng-template #notBoolean>
+        <div *ngIf="column.type==='object'; else notObject">
+            {{value | json}}
+        </div>
+        <ng-template #notObject>
+            {{value}}
+        </ng-template>
+    </ng-template>
+</div>
+<div *ngIf="column.kind=='relatedEntity'">
+    <a href="#">show</a>
+</div>
+<div *ngIf="column.kind=='relatedEntities'">
+    <a href="#">show</a>
+</div>

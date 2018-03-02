@@ -1,11 +1,15 @@
 import { Action } from '@ngrx/store';
+import {
+    ColumnKinds,
+    ColumnTypes
+} from '../models/data';
 
 export enum DataActionTypes {
     SwitchTable = '[Data] Switch Dataclass',
     ResetQuery = '[Data] Reset Query',
     SetQuery = '[Data] Set Query',
-    FetchData = '[Data] Fetch',
     ChangeOptions = '[Data] Change Options',
+    FetchData = '[Data] Fetch',
     UpdateData = '[Data] Update Data',
     FetchColumns = '[Data] Fetch Columns',
     UpdateColumns = '[Data] Update Columns',
@@ -34,13 +38,13 @@ export class FetchData implements Action {
 export class ChangeOptions implements Action {
     readonly type = DataActionTypes.ChangeOptions;
 
-    constructor(public payload: { start: number, pageSize: number, length: number }) { }
+    constructor(public payload: { pageIndex: number, pageSize: number, length: number }) { }
 }
 
 export class UpdateData implements Action {
     readonly type = DataActionTypes.UpdateData;
 
-    constructor(public payload: Array<any>) { }
+    constructor(public payload: {entities: Array<any>, length: number}) { }
 }
 
 export class FetchColumns implements Action {
@@ -50,7 +54,7 @@ export class FetchColumns implements Action {
 export class UpdateColumns implements Action {
     readonly type = DataActionTypes.UpdateColumns;
 
-    constructor(public payload: Array<string>) { }
+    constructor(public payload: Array<{type: ColumnTypes, kind: ColumnKinds, name: string}>) { }
 }
 
 export type DataAction = SwitchTable | ResetQuery | SetQuery | FetchData | ChangeOptions | UpdateData | FetchColumns | UpdateColumns;

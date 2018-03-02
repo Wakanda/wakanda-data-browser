@@ -50,3 +50,7 @@ export const getColumns = createSelector(
     getDataState,
     fromData.getColumns
 );
+export const getStart = createSelector(
+    getDataState,
+    fromData.getStart
+);

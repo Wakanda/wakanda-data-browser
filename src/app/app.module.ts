@@ -12,11 +12,13 @@ import { AppComponent } from './core/containers/app/app.component';
 import { DataTableComponent } from './core/components/data-table/data-table.component';
 import { reducers } from './reducers';
 import { DataEffects } from './core/effects/data';
+import { CellComponent } from './core/components/cell/cell.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DataTableComponent
+    DataTableComponent,
+    CellComponent
   ],
   imports: [
     BrowserModule,
