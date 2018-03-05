@@ -110,7 +110,7 @@ describe('AppComponent', () => {
   it('should render a sidenav', async(() => {
     expect(element.querySelector('mat-sidenav-container')).toBeTruthy();
   }));
-  
+
   it('should have a list of available tables in the sidenav', async(() => {
     fixture.detectChanges();
     let items = debugElement.queryAll(By.css('mat-list-item'));
@@ -118,23 +118,35 @@ describe('AppComponent', () => {
 
     expect(items.length).toEqual(keys.length);
 
-    for (let i = 0; i < items.length; i++) {
-      expect(items[i].nativeElement.textContent).toContain(keys[i]);
-    }
+    items.forEach((item, index) => {
+      expect(item.nativeElement.textContent).toContain(keys[index]);
+    })
   }));
 
   it('should call switchTable when a table name is clicked on the sidenav', async(() => {
     fixture.detectChanges();
     let items = debugElement.queryAll(By.css('mat-list-item'));
-
-
     let keys = Object.keys(catalog);
-    
+
     spyOn(app, 'switchTable');
 
     items[1].triggerEventHandler('click', null);
 
     expect(app.switchTable).toHaveBeenCalledWith(keys[1]);
+  }));
+
+  it('should call toggleSideNav when one of the two menu buttons is clicked', async(() => {
+    fixture.detectChanges();
+    let items = debugElement.queryAll(By.css('button.menu-toggle'));
+
+    expect(items.length).toBeGreaterThan(0);
+
+    spyOn(app, 'toggleSideNav');
+
+    items.forEach((item, index) => {
+      item.triggerEventHandler('click', null);
+      expect(app.toggleSideNav).toHaveBeenCalledTimes(index + 1);
+    });
   }));
 
 });

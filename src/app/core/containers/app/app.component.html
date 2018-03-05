@@ -3,7 +3,7 @@
     <mat-list>
       <h1>
         Dataclasses
-        <button mat-button matSuffix mat-icon-button aria-label="Hide" (click)="toggleSideNav()" *ngIf="showSidenav$ | async">
+        <button mat-button matSuffix mat-icon-button aria-label="Hide" (click)="toggleSideNav()" *ngIf="showSidenav$ | async" class="menu-toggle">
           <mat-icon title="Hide">menu</mat-icon>
         </button>
       </h1>
@@ -12,7 +12,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <button mat-button matSuffix mat-icon-button aria-label="Show" (click)="toggleSideNav()" *ngIf="!(showSidenav$ | async)">
+    <button mat-button matSuffix mat-icon-button aria-label="Show" (click)="toggleSideNav()" *ngIf="!(showSidenav$ | async)" class="menu-toggle">
       <mat-icon title="Show">menu</mat-icon>
     </button>
     <app-data-table></app-data-table>
