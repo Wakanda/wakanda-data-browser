@@ -6,6 +6,9 @@ import * as fromRoot from '../../../reducers';
 import * as data from '../../actions/data';
 import { MatTableDataSource } from '@angular/material';
 
+import 'rxjs/add/operator/withLatestFrom';
+import 'rxjs/add/operator/map';
+
 @Component({
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
