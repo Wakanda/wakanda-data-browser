@@ -1,5 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { MaterialModule } from '../../../material';
+
 import { CellComponent } from './cell.component';
 
 describe('AppCellComponent', () => {
@@ -8,14 +10,20 @@ describe('AppCellComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CellComponent ]
+      declarations: [CellComponent],
+      imports: [MaterialModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CellComponent);
     component = fixture.componentInstance;
+    component.column = {
+      kind: "storage",
+      type: "bool",
+    };
+    component.value = true;
     fixture.detectChanges();
   });
 
