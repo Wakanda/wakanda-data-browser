@@ -31,11 +31,11 @@ describe('AppComponent', () => {
   };
 
   beforeEach(async(() => {
-    const wakandaSpy = {
+    const wakandaStub = {
       getCatalog: function () { }
     };
 
-    spyOn(wakandaSpy, "getCatalog").and.returnValue(new Promise((resolve, reject) => {
+    spyOn(wakandaStub, "getCatalog").and.returnValue(new Promise((resolve, reject) => {
       resolve(catalog);
     }));
 
@@ -51,7 +51,7 @@ describe('AppComponent', () => {
         CellStubComponent
       ],
       providers: [
-        { provide: Wakanda, useValue: wakandaSpy }
+        { provide: Wakanda, useValue: wakandaStub }
       ]
     }).compileComponents();
 
@@ -90,17 +90,21 @@ describe('AppComponent', () => {
   }));
 
   it('should display the sidenav by default', async(() => {
-    app.showSidenav$.subscribe(value => {
-      expect(value).toEqual(true);
-    })
+    app.showSidenav$
+      .first()
+      .subscribe(value => {
+        expect(value).toEqual(true);
+      });
   }));
 
   it('should dispatch an action when toggleSideNav is called', async(() => {
     app.toggleSideNav();
     expect(store.dispatch).toHaveBeenCalledWith(new layout.ToggleSidenav());
-    app.showSidenav$.subscribe(value => {
-      expect(value).toEqual(false);
-    });
+    app.showSidenav$
+      .first()
+      .subscribe(value => {
+        expect(value).toEqual(false);
+      })
   }));
 
   /**
