@@ -13,6 +13,7 @@ import { DebugElement } from '@angular/core/src/debug/debug_node';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/first';
+import { By } from '@angular/platform-browser';
 
 @Component({ selector: 'app-cell', template: '' })
 class CellComponentStub {
@@ -174,6 +175,64 @@ describe('DataTableComponent', () => {
       .first()
       .subscribe(columns => {
         expect(columns).toEqual(c);
+      });
+  }));
+
+  /**
+   * UI
+   */
+
+  it('should update the query input when state changes', async(() => {
+    let queryString = 'lastname == "D*"';
+    store.dispatch(new data.SetQuery(queryString));
+
+    component.query$
+      .first()
+      .subscribe(query => {
+        fixture.detectChanges();
+        let value = debugElement.query(By.css('input.query')).nativeElement.value;
+        expect(value).toEqual(queryString);
+      });
+  }));
+
+  it('should call refreshResult when refresh button is clicked', async(() => {
+    let refreshButton = debugElement.query(By.css('button.refresh'));
+    spyOn(component, 'refreshResult');
+    refreshButton.triggerEventHandler('click', null);
+    expect(component.refreshResult).toHaveBeenCalledTimes(1);
+  }));
+
+  it('should have a reset button when query is not empty', async(() => {
+    let clearButton = debugElement.query(By.css('button.clear'));
+    
+    expect(clearButton === null).toBeTruthy();
+    
+    let queryString = 'lastname == "D*"';
+    store.dispatch(new data.SetQuery(queryString));
+
+    component.query$
+      .first()
+      .subscribe(query => {
+        fixture.detectChanges();
+        clearButton = debugElement.query(By.css('button.clear'));
+        expect(clearButton === null).toBeFalsy();
+      });
+  }));
+
+  it('should call resetQuery when reset button is clicked', async(() => {
+    let queryString = 'lastname == "D*"';
+    store.dispatch(new data.SetQuery(queryString));
+
+    component.query$
+      .first()
+      .subscribe(query => {
+        fixture.detectChanges();
+        let clearButton = debugElement.query(By.css('button.clear'));
+
+        spyOn(component, 'resetQuery');
+        
+        clearButton.triggerEventHandler('click', null);
+        expect(component.resetQuery).toHaveBeenCalledTimes(1);
       });
   }));
 
