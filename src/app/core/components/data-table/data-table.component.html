@@ -9,7 +9,7 @@
 </mat-form-field>
 <mat-paginator #paginator [length]="length$ | async" [pageIndex]="pageIndex$ | async" [pageSize]="pageSize$ | async" [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)">
 </mat-paginator>
-<mat-table #table [dataSource]="data" *ngIf="data">
+<mat-table #table [dataSource]="data$ | async" *ngIf="data$ | async">
   <ng-container *ngFor="let column of columns$ | async" [matColumnDef]="column.name">
     <mat-header-cell *matHeaderCellDef>{{ column.name }}</mat-header-cell>
     <mat-cell *matCellDef="let row">

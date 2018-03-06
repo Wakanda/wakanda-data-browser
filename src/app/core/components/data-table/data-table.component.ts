@@ -19,7 +19,7 @@ export class DataTableComponent implements OnInit {
 
 
   query$: Observable<string>;
-  data;
+  data$;
   columns$;
   columnNames$;
   pageIndex$: Observable<number>;
@@ -38,15 +38,15 @@ export class DataTableComponent implements OnInit {
       });
     });
     this.pageIndex$ = this.store.pipe(select(fromRoot.getStart))
-    .withLatestFrom(this.pageSize$)
-    .map(([start, pageSize]) => {
-      return start / pageSize;
-    });
+      .withLatestFrom(this.pageSize$)
+      .map(([start, pageSize]) => {
+        return start / pageSize;
+      });
 
-    this.store.pipe(select(fromRoot.getRows)).subscribe(rows => {
-      this.data = new MatTableDataSource<Object>(rows);
-      this.cd.markForCheck();
-    });
+    this.data$ = this.store.pipe(select(fromRoot.getRows))
+      .map(rows => {
+        return new MatTableDataSource<Object>(rows);
+      });
   }
 
   ngOnInit() {
