@@ -68,6 +68,10 @@ describe('AppComponent', () => {
     app = fixture.componentInstance;
   }));
 
+  /**
+   * Initialization
+   */
+
   it('should create the app', async(() => {
     expect(app).toBeTruthy();
   }));
@@ -84,11 +88,6 @@ describe('AppComponent', () => {
     expect(store.dispatch).toHaveBeenCalledWith(new data.SwitchTable('Employee'));
   }));
 
-  it('should dispatch an action when switchTable is called', async(() => {
-    app.switchTable('Company');
-    expect(store.dispatch).toHaveBeenCalledWith(new data.SwitchTable('Company'));
-  }));
-
   it('should display the sidenav by default', async(() => {
     app.showSidenav$
       .first()
@@ -96,6 +95,15 @@ describe('AppComponent', () => {
         expect(value).toEqual(true);
       });
   }));
+
+  /**
+   * Dispatches
+   */
+
+  it('should dispatch an action when switchTable is called', async(() => {
+    app.switchTable('Company');
+    expect(store.dispatch).toHaveBeenCalledWith(new data.SwitchTable('Company'));
+  }));  
 
   it('should dispatch an action when toggleSideNav is called', async(() => {
     app.toggleSideNav();
@@ -108,7 +116,7 @@ describe('AppComponent', () => {
   }));
 
   /**
-   * UI tests
+   * UI
    */
 
   it('should render a sidenav', async(() => {
