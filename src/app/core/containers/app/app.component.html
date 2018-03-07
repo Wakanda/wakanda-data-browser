@@ -1,18 +1,19 @@
 <mat-sidenav-container class="app-container">
   <mat-sidenav #sidenav mode="side" [opened]="showSidenav$ | async">
     <mat-list>
-      <h1>
-        Dataclasses
+      <div class="title">
         <button mat-button matSuffix mat-icon-button aria-label="Hide" (click)="toggleSideNav()" *ngIf="showSidenav$ | async" class="menu-toggle">
           <mat-icon title="Hide">menu</mat-icon>
         </button>
-      </h1>
+        <span>Dataclasses</span>
+      </div>
       <mat-list-item *ngFor="let table of tables" (click)="switchTable(table)" class="table"> {{table}} </mat-list-item>
     </mat-list>
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <button mat-button matSuffix mat-icon-button aria-label="Show" (click)="toggleSideNav()" *ngIf="!(showSidenav$ | async)" class="menu-toggle">
+    <button mat-button matSuffix mat-icon-button aria-label="Show" (click)="toggleSideNav()" *ngIf="!(showSidenav$ | async)"
+      class="menu-toggle">
       <mat-icon title="Show">menu</mat-icon>
     </button>
     <app-data-table></app-data-table>
