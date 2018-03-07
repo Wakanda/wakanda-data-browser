@@ -6,6 +6,7 @@ import { MaterialModule } from '../../../material'
 
 import * as data from '../../actions/data';
 import { ColumnTypes, ColumnKinds } from '../../models/data';
+import { testData } from './testData';
 
 import * as fromRoot from '../../../reducers';
 import { DataTableComponent } from './data-table.component';
@@ -27,6 +28,29 @@ describe('DataTableComponent', () => {
   let debugElement: DebugElement;
   let element: HTMLElement;
   let store: Store<fromRoot.State>;
+  let testColumns = [
+    {
+      name: 'ID',
+      kind: ColumnKinds.Storage,
+      type: ColumnTypes.Long,
+    },
+    {
+      name: 'firstname',
+      kind: ColumnKinds.Storage,
+      type: ColumnTypes.String,
+    },
+    {
+      name: 'lastname',
+      kind: ColumnKinds.Storage,
+      type: ColumnTypes.String,
+    },
+    {
+      name: 'manager',
+      kind: ColumnKinds.Storage,
+      type: ColumnTypes.Boolean,
+    },
+  ];
+  let testColumnNames = ['ID', 'firstname', 'lastname', 'manager'];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -38,9 +62,7 @@ describe('DataTableComponent', () => {
       ],
     })
       .compileComponents();
-  }));
 
-  beforeEach(() => {
     store = TestBed.get(Store);
     spyOn(store, 'dispatch').and.callThrough();
 
@@ -49,11 +71,24 @@ describe('DataTableComponent', () => {
     debugElement = fixture.debugElement;
     element = fixture.nativeElement;
     fixture.detectChanges();
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  /**
+   * The behavior of the component is unspecified
+   * when the datasource length exceeds the page size.
+   * The test data should respect this requirement.
+   */
+  it('should have a default pageSize of testData.entities.length', async(() => {
+    component.pageSize$
+      .first()
+      .subscribe((pageSize) => {
+        expect(pageSize).toEqual(testData.entities.length);
+      });
+  }));
 
   /**
    * Dispatches
@@ -119,62 +154,31 @@ describe('DataTableComponent', () => {
   }));
 
   it('should receive data updates', async(() => {
-    let d = {
-      entities: [{
-        ID: 1,
-        firstname: "John",
-        lastname: "Doe",
-        manager: true
-      }],
-      length: 1
-    };
-    store.dispatch(new data.UpdateData(d));
+    store.dispatch(new data.UpdateData(testData));
     component.data$
       .first()
       .withLatestFrom(component.length$)
       .subscribe(([data, length]) => {
-        expect(data.data).toEqual(d.entities);
-        expect(length).toEqual(1);
+        expect(data.data).toEqual(testData.entities);
+        expect(length).toEqual(testData.length);
+        // testData is chosen in order for this condition to be true
+        expect(length).not.toEqual(testData.entities.length);
       });
   }));
 
   it('should receive column names updates', async(() => {
-    let c = [
-      {
-        name: 'ID',
-        kind: ColumnKinds.Storage,
-        type: ColumnTypes.Long,
-      },
-      {
-        name: 'firstname',
-        kind: ColumnKinds.Storage,
-        type: ColumnTypes.String,
-      },
-      {
-        name: 'lastname',
-        kind: ColumnKinds.Storage,
-        type: ColumnTypes.String,
-      },
-      {
-        name: 'manager',
-        kind: ColumnKinds.Storage,
-        type: ColumnTypes.Boolean,
-      },
-    ];
-    let names = ['ID', 'firstname', 'lastname', 'manager'];
-
-    store.dispatch(new data.UpdateColumns(c));
+    store.dispatch(new data.UpdateColumns(testColumns));
 
     component.columnNames$
       .first()
       .subscribe(columnNames => {
-        expect(columnNames).toEqual(names);
+        expect(columnNames).toEqual(testColumnNames);
       });
 
     component.columns$
       .first()
       .subscribe(columns => {
-        expect(columns).toEqual(c);
+        expect(columns).toEqual(testColumns);
       });
   }));
 
@@ -182,7 +186,7 @@ describe('DataTableComponent', () => {
    * UI
    */
 
-  it('should update the query input when state changes', async(() => {
+  it('should update the query input when query$ changes', async(() => {
     let queryString = 'lastname == "D*"';
     store.dispatch(new data.SetQuery(queryString));
 
@@ -202,11 +206,11 @@ describe('DataTableComponent', () => {
     expect(component.refreshResult).toHaveBeenCalledTimes(1);
   }));
 
-  it('should have a reset button when query is not empty', async(() => {
+  it('should have a reset button when query$ is not empty', async(() => {
     let clearButton = debugElement.query(By.css('button.clear'));
-    
+
     expect(clearButton === null).toBeTruthy();
-    
+
     let queryString = 'lastname == "D*"';
     store.dispatch(new data.SetQuery(queryString));
 
@@ -230,9 +234,45 @@ describe('DataTableComponent', () => {
         let clearButton = debugElement.query(By.css('button.clear'));
 
         spyOn(component, 'resetQuery');
-        
+
         clearButton.triggerEventHandler('click', null);
         expect(component.resetQuery).toHaveBeenCalledTimes(1);
+      });
+  }));
+
+  it('should update columns when columns$ changes', async(() => {
+
+    store.dispatch(new data.UpdateColumns(testColumns));
+
+    component.columnNames$
+      .first()
+      .subscribe(columnNames => {
+        fixture.detectChanges();
+        expect(debugElement.queryAll(By.css('mat-header-cell')).length).toEqual(columnNames.length);
+        debugElement.queryAll(By.css('mat-header-cell'))
+          .forEach((element, index) => {
+            expect(element.nativeElement.textContent).toContain(columnNames[index]);
+          });
+      });
+  }));
+
+  it('should update rows data when data$ changes', async(() => {
+    store.dispatch(new data.UpdateData(testData));
+    component.data$
+      .first()
+      .withLatestFrom(component.length$)
+      .subscribe(([data, length]) => {
+        fixture.detectChanges();
+        let rows = debugElement.queryAll(By.css('mat-row'));
+        expect(rows.length).toEqual(testData.entities.length);
+        expect(debugElement.query(By.css('mat-paginator')).componentInstance.length).toEqual(testData.length);
+        
+        // let firstRowCells = rows[0].queryAll(By.css('mat-cell'));
+        // expect(firstRowCells.length).toEqual(testColumnNames.length + 1);
+        // firstRowCells
+        //   .forEach(cell => {
+
+        //   });
       });
   }));
 
