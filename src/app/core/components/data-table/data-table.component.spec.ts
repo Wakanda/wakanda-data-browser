@@ -4,7 +4,8 @@ import { StoreModule, Store, combineReducers } from '@ngrx/store';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../../../material'
 
-import * as data from '../../actions/data';
+import * as dataActions from '../../actions/data';
+import * as routerActions from '../../actions/router';
 import { ColumnTypes, ColumnKinds } from '../../models/data';
 import { testData } from './testData';
 
@@ -97,23 +98,23 @@ describe('DataTableComponent', () => {
   it('should dispatch an action when handlePageEvent is called', async(() => {
     let event = { pageIndex: 0, pageSize: 20, length: 30 };
     component.handlePageEvent(event);
-    expect(store.dispatch).toHaveBeenCalledWith(new data.ChangeOptions(event));
+    expect(store.dispatch).toHaveBeenCalledWith(new routerActions.UpdatePageOptions(event));
   }));
 
   it('should dispatch an action when queryStringChange is called', async(() => {
     let queryString = 'firstname == "E*"';
     component.queryStringChange({ currentTarget: { value: queryString } });
-    expect(store.dispatch).toHaveBeenCalledWith(new data.SetQuery(queryString));
+    expect(store.dispatch).toHaveBeenCalledWith(new routerActions.UpdateQuery(queryString));
   }));
 
   it('should dispatch an action when resetQuery is called', async(() => {
     component.resetQuery();
-    expect(store.dispatch).toHaveBeenCalledWith(new data.ResetQuery());
+    expect(store.dispatch).toHaveBeenCalledWith(new routerActions.UpdateQuery(''));
   }));
 
   it('should dispatch an action when refreshResult is called', async(() => {
     component.refreshResult();
-    expect(store.dispatch).toHaveBeenCalledWith(new data.FetchData());
+    expect(store.dispatch).toHaveBeenCalledWith(new dataActions.FetchData());
   }));
 
   /**
@@ -122,7 +123,7 @@ describe('DataTableComponent', () => {
 
   it('should receive page updates', async(() => {
     let event = { pageIndex: 1, pageSize: 30, length: 50 };
-    store.dispatch(new data.ChangeOptions(event));
+    store.dispatch(new dataActions.ChangeOptions(event));
 
     component.pageSize$
       .first()
@@ -135,7 +136,7 @@ describe('DataTableComponent', () => {
 
   it('should receive query updates', async(() => {
     let queryString = 'lastname == "Ab*"';
-    store.dispatch(new data.SetQuery(queryString));
+    store.dispatch(new dataActions.ChangeOptions({ query: queryString }));
 
     component.query$
       .first()
@@ -145,7 +146,7 @@ describe('DataTableComponent', () => {
   }));
 
   it('should receive query reset', async(() => {
-    store.dispatch(new data.ResetQuery());
+    store.dispatch(new dataActions.ChangeOptions({ query: '' }));
     component.query$
       .first()
       .subscribe(query => {
@@ -154,7 +155,7 @@ describe('DataTableComponent', () => {
   }));
 
   it('should receive data updates', async(() => {
-    store.dispatch(new data.UpdateData(testData));
+    store.dispatch(new dataActions.UpdateData(testData));
     component.data$
       .first()
       .withLatestFrom(component.length$)
@@ -167,7 +168,7 @@ describe('DataTableComponent', () => {
   }));
 
   it('should receive column names updates', async(() => {
-    store.dispatch(new data.UpdateColumns(testColumns));
+    store.dispatch(new dataActions.UpdateColumns(testColumns));
 
     component.columnNames$
       .first()
@@ -188,7 +189,7 @@ describe('DataTableComponent', () => {
 
   it('should update the query input when query$ changes', async(() => {
     let queryString = 'lastname == "D*"';
-    store.dispatch(new data.SetQuery(queryString));
+    store.dispatch(new dataActions.ChangeOptions({ query: queryString }));
 
     component.query$
       .first()
@@ -212,7 +213,7 @@ describe('DataTableComponent', () => {
     expect(clearButton === null).toBeTruthy();
 
     let queryString = 'lastname == "D*"';
-    store.dispatch(new data.SetQuery(queryString));
+    store.dispatch(new dataActions.ChangeOptions({ query: queryString }));
 
     component.query$
       .first()
@@ -225,7 +226,7 @@ describe('DataTableComponent', () => {
 
   it('should call resetQuery when reset button is clicked', async(() => {
     let queryString = 'lastname == "D*"';
-    store.dispatch(new data.SetQuery(queryString));
+    store.dispatch(new dataActions.ChangeOptions({ query: queryString }));
 
     component.query$
       .first()
@@ -242,7 +243,7 @@ describe('DataTableComponent', () => {
 
   it('should update columns when columns$ changes', async(() => {
 
-    store.dispatch(new data.UpdateColumns(testColumns));
+    store.dispatch(new dataActions.UpdateColumns(testColumns));
 
     component.columnNames$
       .first()
@@ -257,7 +258,7 @@ describe('DataTableComponent', () => {
   }));
 
   it('should update rows data when data$ changes', async(() => {
-    store.dispatch(new data.UpdateData(testData));
+    store.dispatch(new dataActions.UpdateData(testData));
     component.data$
       .first()
       .withLatestFrom(component.length$)
@@ -266,7 +267,7 @@ describe('DataTableComponent', () => {
         let rows = debugElement.queryAll(By.css('mat-row'));
         expect(rows.length).toEqual(testData.entities.length);
         expect(debugElement.query(By.css('mat-paginator')).componentInstance.length).toEqual(testData.length);
-        
+
         // let firstRowCells = rows[0].queryAll(By.css('mat-cell'));
         // expect(firstRowCells.length).toEqual(testColumnNames.length + 1);
         // firstRowCells
