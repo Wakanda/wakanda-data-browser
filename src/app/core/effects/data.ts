@@ -20,23 +20,21 @@ import {
     ChangeOptions,
     UpdateData,
     UpdateColumns,
+    FetchTables,
+    UpdateTables,
     DataActionTypes
 } from '../actions/data';
-
+import * as routerActions from '../actions/router';
 
 @Injectable()
 export class DataEffects {
     @Effect()
     fetch$ = this.actions$
-        .ofType<FetchData | SetQuery | ResetQuery | SwitchTable | ChangeOptions>(
-        DataActionTypes.FetchData,
-        DataActionTypes.SetQuery,
-        DataActionTypes.ResetQuery,
-        DataActionTypes.SwitchTable,
-        DataActionTypes.ChangeOptions,
-    )
+        .ofType<FetchData>(
+            DataActionTypes.FetchData
+        )
         .switchMap(() => {
-            return Observable.fromPromise(this.wakanda.getCatalog());
+            return this.wakanda.getCatalog();
         })
         .withLatestFrom(this.store$)
         .switchMap(([ds, state]: [any, State]) => {
@@ -46,14 +44,15 @@ export class DataEffects {
             let start = state.data.start;
 
             if (!tableName) {
+                debugger;
                 return;
             }
 
-            return Observable.fromPromise(ds[state.data.tableName].query({
+            return ds[tableName].query({
                 filter: query,
                 pageSize: pageSize,
                 start: start
-            }));
+            });
         })
         .map((response: any) => {
             return new UpdateData({
@@ -63,10 +62,20 @@ export class DataEffects {
         });
 
     @Effect()
-    SwitchTable = this.actions$
-        .ofType<SwitchTable>(DataActionTypes.SwitchTable)
-        .map(() => {
-            return new FetchColumns();
+    fetchTables = this.actions$
+        .ofType<FetchTables>(DataActionTypes.FetchTables)
+        .mergeMap(action => {
+            return new Promise((resolve, reject) => {
+                this.wakanda.getCatalog()
+                    .then(c => {
+                        resolve([c, action.payload]);
+                    });
+            })
+        })
+        .map(([catalog, table]) => {
+            let tables = Object.keys(catalog);
+
+            return new UpdateTables(tables);
         });
 
     @Effect()
@@ -77,14 +86,7 @@ export class DataEffects {
         })
         .withLatestFrom(this.store$)
         .map(([ds, state]: [any, State]) => {
-            let query = state.data.query;
             let tableName = state.data.tableName;
-            let pageSize = state.data.pageSize;
-            let start = state.data.start;
-
-            if (!tableName) {
-                return;
-            }
 
             let columns = ds[state.data.tableName].attributes;
             return new UpdateColumns(columns);

@@ -4,10 +4,12 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from '../../../reducers';
 import * as data from '../../actions/data';
+import * as router from '../../actions/router';
 import { MatTableDataSource } from '@angular/material';
 
 import 'rxjs/add/operator/withLatestFrom';
 import 'rxjs/add/operator/map';
+import { query } from '@angular/animations';
 
 @Component({
   selector: 'app-data-table',
@@ -53,17 +55,16 @@ export class DataTableComponent implements OnInit {
   }
 
   handlePageEvent(event) {
-    this.store.dispatch(new data.ChangeOptions(event));
+    this.store.dispatch(new router.UpdatePageOptions(event));
   }
 
   queryStringChange(event) {
-    this.store.dispatch(new data.SetQuery(event.currentTarget.value));
+    this.store.dispatch(new router.UpdateQuery(event.currentTarget.value));
   }
 
   resetQuery() {
-    this.store.dispatch(new data.ResetQuery());
+    this.store.dispatch(new router.UpdateQuery(""));
   }
-
   refreshResult() {
     this.store.dispatch(new data.FetchData());
   }

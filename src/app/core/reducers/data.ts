@@ -12,6 +12,7 @@ export interface State {
     length: number;
     rows: Array<any>;
     columns: Array<{type: ColumnTypes, kind: ColumnKinds, name: string}>;
+    tables: Array<string>;
 }
 
 const initialState: State = {
@@ -21,41 +22,31 @@ const initialState: State = {
     start: 0,
     length: 0,
     rows: [],
-    columns: []
+    columns: [],
+    tables: [],
 };
 
 export function reducer(
     state: State = initialState,
     action: DataAction
 ): State {
+    console.log(action);
     switch (action.type) {
-        case DataActionTypes.ResetQuery:
-            return {
-                ...state,
-                query: "",
-                start: 0,
-            };
-
-        case DataActionTypes.SetQuery:
-            return {
-                ...state,
-                query: action.payload,
-                start: 0,
-            };
-
-        case DataActionTypes.SwitchTable:
-            return {
-                ...state,
-                tableName: action.payload,
-                query: "",
-                start: 0,
-            };
 
         case DataActionTypes.ChangeOptions:
+            let payload = action.payload;
+            
+            let pageSize = payload.pageSize !== undefined ? payload.pageSize : state.pageSize;
+            let start = payload.pageIndex !== undefined ? payload.pageIndex * pageSize : state.start;
+            let query = payload.query !== undefined ? payload.query : state.query;
+            let tableName = payload.tableName !== undefined ? payload.tableName : state.tableName;
+            
             return {
                 ...state,
-                pageSize: action.payload.pageSize,
-                start: action.payload.pageIndex * action.payload.pageSize,
+                pageSize,
+                start,
+                query,
+                tableName
             };    
 
         case DataActionTypes.UpdateData:
@@ -71,6 +62,12 @@ export function reducer(
                 columns: action.payload
             };        
 
+        case DataActionTypes.UpdateTables:
+            return {
+                ...state,
+                tables: action.payload
+            };        
+
         default:
             return state;
     }
@@ -83,3 +80,4 @@ export const getRows = (state: State) => state.rows;
 export const getTableName = (state: State) => state.tableName;
 export const getColumns = (state: State) => state.columns;
 export const getStart = (state: State) => state.start;
+export const getTables = (state: State) => state.tables;

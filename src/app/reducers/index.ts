@@ -6,17 +6,22 @@ import {
     MetaReducer,
 } from '@ngrx/store';
 
+import * as fromRouter from '@ngrx/router-store';
 import * as fromLayout from '../core/reducers/layout';
 import * as fromData from '../core/reducers/data';
+import { RouterStateUrl } from '../shared/utils';
 
 export interface State {
     layout: fromLayout.State;
     data: fromData.State;
+    router: fromRouter.RouterReducerState<RouterStateUrl>;
 }
+
 
 export const reducers: ActionReducerMap<State> = {
     layout: fromLayout.reducer,
     data: fromData.reducer,
+    router: fromRouter.routerReducer,
 };
 
 export const getLayoutState = createFeatureSelector<fromLayout.State>('layout');
@@ -53,4 +58,8 @@ export const getColumns = createSelector(
 export const getStart = createSelector(
     getDataState,
     fromData.getStart
+);
+export const getTables = createSelector(
+    getDataState,
+    fromData.getTables
 );

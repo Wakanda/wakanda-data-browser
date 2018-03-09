@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { WakandaClient } from 'wakanda-client/browser/no-promise';
-import { MatTableDataSource } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
+
 import { Store, select } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
+
 import * as fromRoot from '../../../reducers';
-import * as layout from '../../actions/layout';
-import * as data from '../../actions/data';
-import { Wakanda } from '../../../wakanda';
+import * as layoutActions from '../../actions/layout';
+import * as routerActions from '../../actions/router';
 
 @Component({
   selector: 'app-root',
@@ -20,22 +19,24 @@ export class AppComponent {
   catalog;
   data;
   columns = [];
+  tables$: Observable<Array<string>>;
   tableName$: Observable<string>;
 
-  length$ = 0;
+  length$: Observable<number>;
   pageSize$: Observable<number>;
   currentTable$: Observable<string>;
 
-  constructor(private store: Store<fromRoot.State>, private wakanda: Wakanda) {
+  constructor(private store: Store<fromRoot.State>) {
     this.showSidenav$ = this.store.pipe(select(fromRoot.getShowSidenav));
+    this.tables$ = this.store.pipe(select(fromRoot.getTables));
     this.tableName$ = this.store.pipe(select(fromRoot.getTableName));
   }
 
   switchTable(tableName) {
-    this.store.dispatch(new data.SwitchTable(tableName));
+    this.store.dispatch(new routerActions.SwitchTable(tableName));
   }
 
   toggleSideNav() {
-    this.store.dispatch(new layout.ToggleSidenav());
+    this.store.dispatch(new layoutActions.ToggleSidenav());
   }
 }

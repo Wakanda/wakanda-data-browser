@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 import { TestBed, async, ComponentFixture } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { MaterialModule } from '../../../material';
@@ -10,6 +11,8 @@ import * as data from '../../actions/data';
 import * as layout from '../../actions/layout';
 import { DebugElement } from '@angular/core/src/debug/debug_node';
 import { By } from '@angular/platform-browser';
+
+
 
 @Component({ selector: 'app-data-table', template: '' })
 class DataTableStubComponent { }
@@ -43,7 +46,8 @@ describe('AppComponent', () => {
       imports: [
         BrowserAnimationsModule,
         MaterialModule,
-        StoreModule.forRoot(fromRoot.reducers)
+        StoreModule.forRoot(fromRoot.reducers),
+        RouterTestingModule
       ],
       declarations: [
         AppComponent,
@@ -103,7 +107,7 @@ describe('AppComponent', () => {
   it('should dispatch an action when switchTable is called', async(() => {
     app.switchTable('Company');
     expect(store.dispatch).toHaveBeenCalledWith(new data.SwitchTable('Company'));
-  }));  
+  }));
 
   it('should dispatch an action when toggleSideNav is called', async(() => {
     app.toggleSideNav();

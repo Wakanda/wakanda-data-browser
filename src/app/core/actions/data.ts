@@ -9,26 +9,12 @@ export enum DataActionTypes {
     ResetQuery = '[Data] Reset Query',
     SetQuery = '[Data] Set Query',
     ChangeOptions = '[Data] Change Options',
-    FetchData = '[Data] Fetch',
+    FetchData = '[Data] Fetch Data',
     UpdateData = '[Data] Update Data',
     FetchColumns = '[Data] Fetch Columns',
     UpdateColumns = '[Data] Update Columns',
-}
-
-export class SwitchTable implements Action {
-    readonly type = DataActionTypes.SwitchTable;
-
-    constructor(public payload: string) { }
-}
-
-export class ResetQuery implements Action {
-    readonly type = DataActionTypes.ResetQuery;
-}
-
-export class SetQuery implements Action {
-    readonly type = DataActionTypes.SetQuery;
-
-    constructor(public payload: string) { }
+    UpdateTables = '[Data] Update Tables',
+    FetchTables = '[Data] Fetch Tables',
 }
 
 export class FetchData implements Action {
@@ -38,13 +24,13 @@ export class FetchData implements Action {
 export class ChangeOptions implements Action {
     readonly type = DataActionTypes.ChangeOptions;
 
-    constructor(public payload: { pageIndex: number, pageSize: number, length: number }) { }
+    constructor(public payload: { pageIndex: number, pageSize: number, length: number, tableName: string, query: string }) { }
 }
 
 export class UpdateData implements Action {
     readonly type = DataActionTypes.UpdateData;
 
-    constructor(public payload: {entities: Array<any>, length: number}) { }
+    constructor(public payload: { entities: Array<any>, length: number }) { }
 }
 
 export class FetchColumns implements Action {
@@ -54,7 +40,19 @@ export class FetchColumns implements Action {
 export class UpdateColumns implements Action {
     readonly type = DataActionTypes.UpdateColumns;
 
-    constructor(public payload: Array<{type: ColumnTypes, kind: ColumnKinds, name: string}>) { }
+    constructor(public payload: Array<{ type: ColumnTypes, kind: ColumnKinds, name: string }>) { }
 }
 
-export type DataAction = SwitchTable | ResetQuery | SetQuery | FetchData | ChangeOptions | UpdateData | FetchColumns | UpdateColumns;
+export class FetchTables implements Action {
+    readonly type = DataActionTypes.FetchTables;
+
+    constructor(public payload?: string) { }
+}
+
+export class UpdateTables implements Action {
+    readonly type = DataActionTypes.UpdateTables;
+
+    constructor(public payload: Array<string>) { }
+}
+
+export type DataAction = FetchData | ChangeOptions | UpdateData | FetchColumns | UpdateColumns | UpdateTables | FetchTables;
