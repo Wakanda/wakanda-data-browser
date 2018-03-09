@@ -13,18 +13,10 @@ import * as routerActions from '../../actions/router';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  showSidenav$: Observable<boolean>;
 
-  title = 'Wakanda Data Browser';
-  catalog;
-  data;
-  columns = [];
+  showSidenav$: Observable<boolean>;
   tables$: Observable<Array<string>>;
   tableName$: Observable<string>;
-
-  length$: Observable<number>;
-  pageSize$: Observable<number>;
-  currentTable$: Observable<string>;
 
   constructor(private store: Store<fromRoot.State>) {
     this.showSidenav$ = this.store.pipe(select(fromRoot.getShowSidenav));
