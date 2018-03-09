@@ -50,7 +50,8 @@ export class RouterEffects {
                 query: {
                     ...currentParams,
                     table,
-                    query: ""
+                    query: "",
+                    page: 0
                 }
             });
         });
