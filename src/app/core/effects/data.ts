@@ -12,9 +12,6 @@ import 'rxjs/add/observable/fromPromise';
 import { State } from '../../reducers';
 import { Wakanda } from '../../wakanda';
 import {
-    SwitchTable,
-    ResetQuery,
-    SetQuery,
     FetchData,
     FetchColumns,
     ChangeOptions,

@@ -30,7 +30,6 @@ export function reducer(
     state: State = initialState,
     action: DataAction
 ): State {
-    console.log(action);
     switch (action.type) {
 
         case DataActionTypes.ChangeOptions:
