@@ -20,7 +20,7 @@ export class AppComponent {
   catalog;
   data;
   columns = [];
-  tables = [];
+  tableName$: Observable<string>;
 
   length$ = 0;
   pageSize$: Observable<number>;
@@ -28,14 +28,7 @@ export class AppComponent {
 
   constructor(private store: Store<fromRoot.State>, private wakanda: Wakanda) {
     this.showSidenav$ = this.store.pipe(select(fromRoot.getShowSidenav));
-
-    this.wakanda.getCatalog().then(c => {
-      this.catalog = c;
-      this.tables = Object.keys(c);
-      if (this.tables.length) {
-        this.switchTable(this.tables[0]);        
-      }
-    });
+    this.tableName$ = this.store.pipe(select(fromRoot.getTableName));
   }
 
   switchTable(tableName) {

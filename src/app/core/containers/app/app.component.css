@@ -20,4 +20,10 @@ mat-sidenav-content {
     align-items: center;
     font-family: sans-serif;
     font-size: x-large;
+    margin-bottom: 1rem;
+}
+
+mat-list-item.selected {
+    border-left: solid black 0.2rem;
+    font-weight: bold;
 }

@@ -7,7 +7,8 @@
         </button>
         <span>Dataclasses</span>
       </div>
-      <mat-list-item *ngFor="let table of tables" (click)="switchTable(table)" class="table"> {{table}} </mat-list-item>
+      <mat-list-item *ngFor="let table of tables$ | async" (click)="switchTable(table)" class="table" [ngClass]="{'selected' : table === (tableName$|async)}">
+        {{table}} </mat-list-item>
     </mat-list>
   </mat-sidenav>
 
