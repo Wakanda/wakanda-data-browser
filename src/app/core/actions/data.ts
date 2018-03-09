@@ -24,7 +24,7 @@ export class FetchData implements Action {
 export class ChangeOptions implements Action {
     readonly type = DataActionTypes.ChangeOptions;
 
-    constructor(public payload: { pageIndex: number, pageSize: number, length: number, tableName: string, query: string }) { }
+    constructor(public payload: { pageIndex?: number, pageSize?: number, length?: number, tableName?: string, query?: string }) { }
 }
 
 export class UpdateData implements Action {
