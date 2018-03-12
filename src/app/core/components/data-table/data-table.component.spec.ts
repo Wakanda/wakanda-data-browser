@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { StoreModule, Store, combineReducers } from '@ngrx/store';
+import { StoreModule, Store} from '@ngrx/store';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../../../material'
 
@@ -21,6 +21,9 @@ import { By } from '@angular/platform-browser';
 class CellComponentStub {
   @Input() column;
   @Input() value;
+  @Input() entity;
+  
+  constructor(private store: Store<fromRoot.State>) {}
 }
 
 describe('DataTableComponent', () => {

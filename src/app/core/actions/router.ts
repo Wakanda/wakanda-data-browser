@@ -23,7 +23,7 @@ export class Go implements Action {
 export class SwitchTable implements Action {
   readonly type = RouterActionTypes.SwitchTable;
 
-  constructor(public table: string) { }
+  constructor(public params: { table: string, query?: string }) { }
 }
 
 export class UpdateQuery implements Action {

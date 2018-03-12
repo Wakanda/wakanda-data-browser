@@ -144,7 +144,7 @@ describe('AppComponent', () => {
 
   it('should dispatch an action when switchTable is called', async(() => {
     app.switchTable('Company');
-    expect(store.dispatch).toHaveBeenCalledWith(new routerActions.SwitchTable('Company'));
+    expect(store.dispatch).toHaveBeenCalledWith(new routerActions.SwitchTable({table: 'Company'}));
   }));
 
   it('should dispatch an action when toggleSideNav is called', async(() => {

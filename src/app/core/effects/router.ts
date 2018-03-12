@@ -41,16 +41,18 @@ export class RouterEffects {
     @Effect()
     switchTable$ = this.actions$
         .ofType<SwitchTable>(RouterActionTypes.SwitchTable)
-        .map((action) => action.table)
+        .map((action) => action.params)
         .withLatestFrom(this.store$)
-        .map(([table, state]: [string, State]) => {
+        .map(([params, state]: [any, State]) => {
+            let query = params.query || "";
+            let table = params.table || "";
             let currentParams = state.router.state.queryParams;
             return new Go({
                 path: [''],
                 query: {
                     ...currentParams,
                     table,
-                    query: "",
+                    query,
                     page: 0
                 }
             });
@@ -107,12 +109,12 @@ export class RouterEffects {
                 this.wakanda.getCatalog()
                     .then(c => {
                         let tables = Object.keys(c);
-                        this.store$.dispatch(new SwitchTable(tables[0])); // <- navigate to first table here
+                        this.store$.dispatch(new SwitchTable({ table: tables[0] })); // <- navigate to first table here
                     });
             } else if (!params.page || !params.pageSize) {
                 this.store$.dispatch(new UpdatePageOptions({
                     pageSize: state.data.pageSize,
-                    pageIndex: state.data.start / state.data.pageSize,                    
+                    pageIndex: state.data.start / state.data.pageSize,
                 }));
             } else {
                 let pageSize = parseInt(params.pageSize);
@@ -120,7 +122,7 @@ export class RouterEffects {
                 let query = params.query || "";
                 let tableName = params.table;
                 let length = state.data.length;
-                
+
                 this.store$.dispatch(new dataActions.ChangeOptions({
                     pageIndex,
                     pageSize,

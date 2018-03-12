@@ -25,7 +25,7 @@ export class AppComponent {
   }
 
   switchTable(tableName) {
-    this.store.dispatch(new routerActions.SwitchTable(tableName));
+    this.store.dispatch(new routerActions.SwitchTable({table: tableName}));
   }
 
   toggleSideNav() {

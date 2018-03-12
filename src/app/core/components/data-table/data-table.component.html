@@ -13,7 +13,7 @@
   <ng-container *ngFor="let column of columns$ | async" [matColumnDef]="column.name">
     <mat-header-cell *matHeaderCellDef>{{ column.name }}</mat-header-cell>
     <mat-cell *matCellDef="let row">
-      <app-cell [column]="column" [value]="row[column.name]">
+      <app-cell [column]="column" [value]="row[column.name]" [entity]="row">
       </app-cell>
     </mat-cell>
   </ng-container>

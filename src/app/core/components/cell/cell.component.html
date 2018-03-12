@@ -12,8 +12,8 @@
     </ng-template>
 </div>
 <div *ngIf="column.kind=='relatedEntity'">
-    <a href="#">show</a>
+    <a (click)="displayRelatedEntity()" class="link">show</a>
 </div>
 <div *ngIf="column.kind=='relatedEntities'">
-    <a href="#">show</a>
+    <a (click)="displayRelatedEntities()" class="link">show</a>
 </div>

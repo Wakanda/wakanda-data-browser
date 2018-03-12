@@ -1,4 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { StoreModule, Store} from '@ngrx/store';
+import * as fromRoot from '../../../reducers';
 
 import { MaterialModule } from '../../../material';
 
@@ -11,7 +13,10 @@ describe('AppCellComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [CellComponent],
-      imports: [MaterialModule]
+      imports: [
+        MaterialModule,
+        StoreModule.forRoot(fromRoot.reducers),
+      ]
     })
       .compileComponents();
   }));
