@@ -1,20 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
-import { Action, Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
+import { map, withLatestFrom } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { ROUTER_NAVIGATION, RouterNavigationAction } from '@ngrx/router-store';
-
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/withLatestFrom';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/skip';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/observable/of';
 
 import { State } from '../../reducers';
 import {
@@ -33,17 +23,18 @@ import { Wakanda } from '../../wakanda';
 @Injectable()
 export class RouterEffects {
     @Effect({ dispatch: false })
-    navigate$ = this.actions$
-        .ofType<Go>(RouterActionTypes.Go)
-        .map((action: Go) => action.payload)
-        .map(({ path, query: queryParams, extras }) => this.router.navigate(path, { queryParams, ...extras }));
+    navigate$ = this.actions$.pipe(
+        ofType<Go>(RouterActionTypes.Go),
+        map((action: Go) => action.payload),
+        map(({ path, query: queryParams, extras }) => this.router.navigate(path, { queryParams, ...extras }))
+    );
 
     @Effect()
-    switchTable$ = this.actions$
-        .ofType<SwitchTable>(RouterActionTypes.SwitchTable)
-        .map((action) => action.params)
-        .withLatestFrom(this.store$)
-        .map(([params, state]: [any, State]) => {
+    switchTable$ = this.actions$.pipe(
+        ofType<SwitchTable>(RouterActionTypes.SwitchTable),
+        map((action) => action.params),
+        withLatestFrom(this.store$),
+        map(([params, state]: [any, State]) => {
             let query = params.query || "";
             let table = params.table || "";
             let currentParams = state.router.state.queryParams;
@@ -56,14 +47,15 @@ export class RouterEffects {
                     page: 0
                 }
             });
-        });
+        })
+    );
 
     @Effect()
-    updateQuery$ = this.actions$
-        .ofType<UpdateQuery>(RouterActionTypes.UpdateQuery)
-        .map((action) => action.query)
-        .withLatestFrom(this.store$)
-        .map(([query, state]: [string, State]) => {
+    updateQuery$ = this.actions$.pipe(
+        ofType<UpdateQuery>(RouterActionTypes.UpdateQuery),
+        map((action) => action.query),
+        withLatestFrom(this.store$),
+        map(([query, state]: [string, State]) => {
             let currentParams = state.router.state.queryParams;
             return new Go({
                 path: [''],
@@ -72,14 +64,15 @@ export class RouterEffects {
                     query
                 }
             });
-        });
+        })
+    );
 
     @Effect()
-    updatePageOptions$ = this.actions$
-        .ofType<UpdatePageOptions>(RouterActionTypes.UpdatePageOptions)
-        .map((action) => action.options)
-        .withLatestFrom(this.store$)
-        .map(([options, state]: [any, State]) => {
+    updatePageOptions$ = this.actions$.pipe(
+        ofType<UpdatePageOptions>(RouterActionTypes.UpdatePageOptions),
+        map((action) => action.options),
+        withLatestFrom(this.store$),
+        map(([options, state]: [any, State]) => {
             let currentParams = state.router.state.queryParams;
             let page = options.pageIndex;
             let pageSize = options.pageSize;
@@ -92,19 +85,19 @@ export class RouterEffects {
                     pageSize
                 }
             });
-        });
-
+        })
+    );
 
     @Effect({ dispatch: false })
-    routeChange = this.actions$
-        .ofType(ROUTER_NAVIGATION)
-        .map((action: any) => {
+    routeChange = this.actions$.pipe(
+        ofType(ROUTER_NAVIGATION),
+        map((action: any) => {
             let { queryParams } = action.payload.routerState;
 
             return queryParams;
-        })
-        .withLatestFrom(this.store$)
-        .map(([params, state]) => {
+        }),
+        withLatestFrom(this.store$),
+        map(([params, state]) => {
             if (!params.table) {
                 this.wakanda.getCatalog()
                     .then(c => {
@@ -135,7 +128,8 @@ export class RouterEffects {
                 this.store$.dispatch(new dataActions.FetchData());
             }
 
-        });
+        })
+    );
 
     constructor(
         private actions$: Actions,
