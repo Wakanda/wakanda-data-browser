@@ -2,12 +2,12 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import './iconfont/material-icons.css';
 
-html, body {
-    margin: 0;
-    height: 100%;
-}
+html {
+    height:100%;
+} 
 
-app-root {
-    height: 100%;
-    width: 100%;
+body {
+    min-height:100%;
+    margin: 0px;
+    display: flex;
 }

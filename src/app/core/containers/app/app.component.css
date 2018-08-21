@@ -27,3 +27,8 @@ mat-list-item.selected {
     border-left: solid black 0.2rem;
     font-weight: bold;
 }
+
+:host {
+    flex-grow: 1;
+    flex-basis: auto;
+}
