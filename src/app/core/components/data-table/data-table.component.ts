@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs';
 import { withLatestFrom, map } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
@@ -16,7 +16,8 @@ import Entity from 'wakanda-client/dist/presentation/entity';
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None
 })
 export class DataTableComponent implements OnInit {
 
@@ -91,5 +92,9 @@ export class DataTableComponent implements OnInit {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row));
+  }
+
+  removeSelectedRows() {
+    this.store.dispatch(new data.RemoveRows(this.selection.selected));
   }
 }

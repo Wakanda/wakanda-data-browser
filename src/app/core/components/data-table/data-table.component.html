@@ -7,8 +7,19 @@
     <mat-icon>refresh</mat-icon>
   </button>
 </mat-form-field>
-<mat-paginator #paginator [length]="length$ | async" [pageIndex]="pageIndex$ | async" [pageSize]="pageSize$ | async" [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)">
-</mat-paginator>
+<div id="row">
+  <mat-paginator #paginator [length]="length$ | async" [pageIndex]="pageIndex$ | async" [pageSize]="pageSize$ | async" [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)">
+  </mat-paginator>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="removeSelectedRows()">
+      <mat-icon>delete</mat-icon>
+      <span>Delete</span>
+    </button>
+  </mat-menu>
+</div>
 <mat-table #table [dataSource]="data$ | async" *ngIf="data$ | async">
   <ng-container matColumnDef="select">
     <mat-header-cell *matHeaderCellDef>

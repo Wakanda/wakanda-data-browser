@@ -14,7 +14,8 @@ import {
     UpdateColumns,
     FetchTables,
     UpdateTables,
-    DataActionTypes
+    DataActionTypes,
+    RemoveRows
 } from '../actions/data';
 import * as routerActions from '../actions/router';
 
@@ -80,6 +81,19 @@ export class DataEffects {
 
             let columns = ds[state.data.tableName].attributes;
             return new UpdateColumns(columns);
+        })
+    );
+
+    @Effect()
+    removeRows$ = this.actions$.pipe(
+        ofType<RemoveRows>(DataActionTypes.RemoveRows),
+        map(action => {
+            return Promise.all(action.rows.map(row => {
+                return row.delete();
+            }));
+        }),
+        map(result => {
+            return new FetchData();
         })
     );
 

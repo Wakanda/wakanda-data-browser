@@ -1,9 +1,7 @@
 import {
     ActionReducerMap,
     createSelector,
-    createFeatureSelector,
-    ActionReducer,
-    MetaReducer,
+    createFeatureSelector
 } from '@ngrx/store';
 
 import * as fromRouter from '@ngrx/router-store';
