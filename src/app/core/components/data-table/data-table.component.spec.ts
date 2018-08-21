@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { StoreModule, Store} from '@ngrx/store';
+import { StoreModule, Store } from '@ngrx/store';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../../../material'
+import { first, withLatestFrom } from 'rxjs/operators';
 
 import * as dataActions from '../../actions/data';
 import * as routerActions from '../../actions/router';
@@ -12,9 +13,6 @@ import { testData } from './testData';
 import * as fromRoot from '../../../reducers';
 import { DataTableComponent } from './data-table.component';
 import { DebugElement } from '@angular/core/src/debug/debug_node';
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/first';
 import { By } from '@angular/platform-browser';
 
 @Component({ selector: 'app-cell', template: '' })
@@ -22,8 +20,8 @@ class CellComponentStub {
   @Input() column;
   @Input() value;
   @Input() entity;
-  
-  constructor(private store: Store<fromRoot.State>) {}
+
+  constructor(private store: Store<fromRoot.State>) { }
 }
 
 describe('DataTableComponent', () => {
@@ -87,8 +85,7 @@ describe('DataTableComponent', () => {
    * The test data should respect this requirement.
    */
   it('should have a default pageSize of testData.entities.length', async(() => {
-    component.pageSize$
-      .first()
+    component.pageSize$.pipe(first())
       .subscribe((pageSize) => {
         expect(pageSize).toEqual(testData.entities.length);
       });
@@ -128,9 +125,10 @@ describe('DataTableComponent', () => {
     let event = { pageIndex: 1, pageSize: 30, length: 50 };
     store.dispatch(new dataActions.ChangeOptions(event));
 
-    component.pageSize$
-      .first()
-      .withLatestFrom(component.pageIndex$)
+    component.pageSize$.pipe(
+      first(),
+      withLatestFrom(component.pageIndex$)
+    )
       .subscribe(([pageSize, pageIndex]) => {
         expect(pageSize).toEqual(30);
         expect(pageIndex).toEqual(1);
@@ -141,8 +139,7 @@ describe('DataTableComponent', () => {
     let queryString = 'lastname == "Ab*"';
     store.dispatch(new dataActions.ChangeOptions({ query: queryString }));
 
-    component.query$
-      .first()
+    component.query$.pipe(first())
       .subscribe(query => {
         expect(query).toEqual(queryString);
       });
@@ -150,8 +147,7 @@ describe('DataTableComponent', () => {
 
   it('should receive query reset', async(() => {
     store.dispatch(new dataActions.ChangeOptions({ query: '' }));
-    component.query$
-      .first()
+    component.query$.pipe(first())
       .subscribe(query => {
         expect(query.length).toEqual(0);
       });
@@ -159,10 +155,11 @@ describe('DataTableComponent', () => {
 
   it('should receive data updates', async(() => {
     store.dispatch(new dataActions.UpdateData(testData));
-    component.data$
-      .first()
-      .withLatestFrom(component.length$)
-      .subscribe(([data, length]) => {
+    component.data$.pipe(
+      first(),
+      withLatestFrom(component.length$)
+    )
+      .subscribe(([data, length]: [any, number]) => {
         expect(data.data).toEqual(testData.entities);
         expect(length).toEqual(testData.length);
         // testData is chosen in order for this condition to be true
@@ -173,14 +170,12 @@ describe('DataTableComponent', () => {
   it('should receive column names updates', async(() => {
     store.dispatch(new dataActions.UpdateColumns(testColumns));
 
-    component.columnNames$
-      .first()
+    component.columnNames$.pipe(first())
       .subscribe(columnNames => {
         expect(columnNames).toEqual(testColumnNames);
       });
 
-    component.columns$
-      .first()
+    component.columns$.pipe(first())
       .subscribe(columns => {
         expect(columns).toEqual(testColumns);
       });
@@ -194,8 +189,7 @@ describe('DataTableComponent', () => {
     let queryString = 'lastname == "D*"';
     store.dispatch(new dataActions.ChangeOptions({ query: queryString }));
 
-    component.query$
-      .first()
+    component.query$.pipe(first())
       .subscribe(query => {
         fixture.detectChanges();
         let value = debugElement.query(By.css('input.query')).nativeElement.value;
@@ -218,8 +212,7 @@ describe('DataTableComponent', () => {
     let queryString = 'lastname == "D*"';
     store.dispatch(new dataActions.ChangeOptions({ query: queryString }));
 
-    component.query$
-      .first()
+    component.query$.pipe(first())
       .subscribe(query => {
         fixture.detectChanges();
         clearButton = debugElement.query(By.css('button.clear'));
@@ -231,8 +224,7 @@ describe('DataTableComponent', () => {
     let queryString = 'lastname == "D*"';
     store.dispatch(new dataActions.ChangeOptions({ query: queryString }));
 
-    component.query$
-      .first()
+    component.query$.pipe(first())
       .subscribe(query => {
         fixture.detectChanges();
         let clearButton = debugElement.query(By.css('button.clear'));
@@ -248,8 +240,7 @@ describe('DataTableComponent', () => {
 
     store.dispatch(new dataActions.UpdateColumns(testColumns));
 
-    component.columnNames$
-      .first()
+    component.columnNames$.pipe(first())
       .subscribe(columnNames => {
         fixture.detectChanges();
         expect(debugElement.queryAll(By.css('mat-header-cell')).length).toEqual(columnNames.length);
@@ -262,9 +253,10 @@ describe('DataTableComponent', () => {
 
   it('should update rows data when data$ changes', async(() => {
     store.dispatch(new dataActions.UpdateData(testData));
-    component.data$
-      .first()
-      .withLatestFrom(component.length$)
+    component.data$.pipe(
+      first(),
+      withLatestFrom(component.length$)
+    )
       .subscribe(([data, length]) => {
         fixture.detectChanges();
         let rows = debugElement.queryAll(By.css('mat-row'));

@@ -6,10 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule, Store, combineReducers } from '@ngrx/store';
 import { DebugElement } from '@angular/core/src/debug/debug_node';
 import { By } from '@angular/platform-browser';
-
-import 'rxjs/add/operator/first';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/withLatestFrom';
+import { first, withLatestFrom, map } from 'rxjs/operators';
 
 import { MaterialModule } from '../../../material';
 
@@ -18,8 +15,6 @@ import { Wakanda } from '../../../wakanda';
 import * as dataActions from '../../actions/data';
 import * as layout from '../../actions/layout';
 import * as routerActions from '../../actions/router';
-
-
 
 @Component({ selector: 'app-data-table', template: '' })
 class DataTableStubComponent { }
@@ -88,8 +83,7 @@ describe('AppComponent', () => {
   }));
 
   it('should display the sidenav by default', async(() => {
-    app.showSidenav$
-      .first()
+    app.showSidenav$.pipe(first())
       .subscribe(value => {
         expect(value).toEqual(true);
       });
@@ -103,8 +97,7 @@ describe('AppComponent', () => {
     let table = 'Employee';
     store.dispatch(new dataActions.ChangeOptions({ tableName: table }));
 
-    app.tableName$
-      .first()
+    app.tableName$.pipe(first())
       .subscribe(tableName => {
         expect(tableName).toEqual(table);
       });
@@ -114,8 +107,7 @@ describe('AppComponent', () => {
     let tables = Object.keys(catalog);
     store.dispatch(new dataActions.UpdateTables(tables));
 
-    app.tables$
-      .first()
+    app.tables$.pipe(first())
       .subscribe(data => {
         expect(data).toEqual(tables);
       });
@@ -124,13 +116,14 @@ describe('AppComponent', () => {
   it('should receive sidenav state updates', async(() => {
     store.dispatch(new layout.ToggleSidenav());
 
-    app.showSidenav$
-      .first()
-      .map(value => {
+    app.showSidenav$.pipe(
+      first(),
+      map(value => {
         store.dispatch(new layout.ToggleSidenav());
         return value;
-      })
-      .withLatestFrom(app.showSidenav$)
+      }),
+      withLatestFrom(app.showSidenav$)
+    )
       .subscribe(([v1, v2]) => {
         expect(typeof v1).toEqual('boolean');
         expect(typeof v2).toEqual('boolean');
@@ -144,14 +137,13 @@ describe('AppComponent', () => {
 
   it('should dispatch an action when switchTable is called', async(() => {
     app.switchTable('Company');
-    expect(store.dispatch).toHaveBeenCalledWith(new routerActions.SwitchTable({table: 'Company'}));
+    expect(store.dispatch).toHaveBeenCalledWith(new routerActions.SwitchTable({ table: 'Company' }));
   }));
 
   it('should dispatch an action when toggleSideNav is called', async(() => {
     app.toggleSideNav();
     expect(store.dispatch).toHaveBeenCalledWith(new layout.ToggleSidenav());
-    app.showSidenav$
-      .first()
+    app.showSidenav$.pipe(first())
       .subscribe(value => {
         expect(value).toEqual(false);
       })
