@@ -1,14 +1,16 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs';
 import { withLatestFrom, map } from 'rxjs/operators';
-
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from '../../../reducers';
 import * as data from '../../actions/data';
 import * as router from '../../actions/router';
-import { MatTableDataSource } from '@angular/material';
 
+import { MatTableDataSource } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
 // import { query } from '@angular/animations';
+
+import Entity from 'wakanda-client/dist/presentation/entity';
 
 @Component({
   selector: 'app-data-table',
@@ -18,15 +20,16 @@ import { MatTableDataSource } from '@angular/material';
 })
 export class DataTableComponent implements OnInit {
 
-
   query$: Observable<string>;
-  data$;
+  data$: Observable<MatTableDataSource<Entity>>;
+  dataSource: MatTableDataSource<Entity>;
   columns$;
   columnNames$;
   pageIndex$: Observable<number>;
   pageSize$: Observable<number>;
   length$: Observable<number>;
   pageSizeOptions = [20, 40, 80, 100];
+  selection: SelectionModel<Entity> = new SelectionModel<Entity>(true, []);
 
   constructor(private store: Store<fromRoot.State>, private cd: ChangeDetectorRef) {
     this.query$ = this.store.pipe(select(fromRoot.getQuery));
@@ -34,8 +37,10 @@ export class DataTableComponent implements OnInit {
     this.length$ = this.store.pipe(select(fromRoot.getLength));
     this.columns$ = this.store.pipe(select(fromRoot.getColumns));
     this.columnNames$ = this.columns$.pipe(
-      map(columns => {
-        return columns.map(c => c.name);
+      map((columns: Array<{ name: string }>) => {
+        let columnNames = columns.map(c => c.name);
+        columnNames.unshift('select');
+        return columnNames;
       })
     );
     this.pageIndex$ = this.store.pipe(
@@ -49,7 +54,9 @@ export class DataTableComponent implements OnInit {
     this.data$ = this.store.pipe(
       select(fromRoot.getRows),
       map(rows => {
-        return new MatTableDataSource<Object>(rows);
+        this.dataSource = new MatTableDataSource<Entity>(rows);
+        this.selection.clear();
+        return this.dataSource;
       })
     );
   }
@@ -68,8 +75,21 @@ export class DataTableComponent implements OnInit {
   resetQuery() {
     this.store.dispatch(new router.UpdateQuery(""));
   }
+
   refreshResult() {
     this.store.dispatch(new data.FetchData());
   }
 
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+
+    return numSelected === numRows;
+  }
+
+  toggleSelectAll(event) {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
+  }
 }

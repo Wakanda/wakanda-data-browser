@@ -10,6 +10,19 @@
 <mat-paginator #paginator [length]="length$ | async" [pageIndex]="pageIndex$ | async" [pageSize]="pageSize$ | async" [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)">
 </mat-paginator>
 <mat-table #table [dataSource]="data$ | async" *ngIf="data$ | async">
+  <ng-container matColumnDef="select">
+    <mat-header-cell *matHeaderCellDef>
+      <mat-checkbox (change)="$event ? toggleSelectAll($event) : null"
+                        [checked]="isAllSelected()">
+      </mat-checkbox>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? this.selection.toggle(row) : null"
+                        [checked]="selection.isSelected(row)">
+      </mat-checkbox>
+    </mat-cell>
+  </ng-container>
   <ng-container *ngFor="let column of columns$ | async" [matColumnDef]="column.name">
     <mat-header-cell *matHeaderCellDef>{{ column.name }}</mat-header-cell>
     <mat-cell *matCellDef="let row">
