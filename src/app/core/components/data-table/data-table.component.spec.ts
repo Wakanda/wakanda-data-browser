@@ -52,7 +52,7 @@ describe('DataTableComponent', () => {
       type: ColumnTypes.Boolean,
     },
   ];
-  let testColumnNames = ['ID', 'firstname', 'lastname', 'manager'];
+  let testColumnNames = ['select' /*selection column*/, 'ID', 'firstname', 'lastname', 'manager'];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -246,7 +246,11 @@ describe('DataTableComponent', () => {
         expect(debugElement.queryAll(By.css('mat-header-cell')).length).toEqual(columnNames.length);
         debugElement.queryAll(By.css('mat-header-cell'))
           .forEach((element, index) => {
-            expect(element.nativeElement.textContent).toContain(columnNames[index]);
+            if (index === 0) {
+              expect(element.queryAll(By.css('mat-checkbox')).length).toEqual(1);
+            } else {
+              expect(element.nativeElement.textContent).toContain(columnNames[index]);
+            }
           });
       });
   }));
