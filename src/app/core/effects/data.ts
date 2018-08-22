@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { from } from 'rxjs';
-import { switchMap, mergeMap, withLatestFrom, map } from 'rxjs/operators';
+import { from, of } from 'rxjs';
+import { switchMap, withLatestFrom, map, catchError } from 'rxjs/operators';
 
-import { State } from '../../reducers';
 import { Wakanda } from '../../wakanda';
+import { isAuthError } from '../../shared/utils'
+import { State } from '../../reducers';
 import {
     FetchData,
     FetchColumns,
-    ChangeOptions,
     UpdateData,
     UpdateColumns,
     FetchTables,
@@ -17,10 +17,21 @@ import {
     DataActionTypes,
     RemoveRows
 } from '../actions/data';
-import * as routerActions from '../actions/router';
+import * as layoutActions from '../actions/layout';
 
 @Injectable()
 export class DataEffects {
+
+    authErrorHandler() {
+        return catchError(error => {
+            if (isAuthError(error)) {
+                this.store$.dispatch(new layoutActions.ShowLogin());
+            }
+            
+            throw error;
+        });
+    }
+
     @Effect()
     fetch$ = this.actions$.pipe(
         ofType<FetchData>(DataActionTypes.FetchData),
@@ -48,13 +59,14 @@ export class DataEffects {
                 entities: response.entities,
                 length: response._count
             });
-        })
+        }),
+        this.authErrorHandler()
     );
 
     @Effect()
     fetchTables = this.actions$.pipe(
         ofType<FetchTables>(DataActionTypes.FetchTables),
-        mergeMap(action => {
+        switchMap(action => {
             return new Promise((resolve, reject) => {
                 this.wakanda.getCatalog()
                     .then(c => {
@@ -62,11 +74,12 @@ export class DataEffects {
                     });
             })
         }),
-        map(([catalog, table]) => {
+        map(catalog => {
             let tables = Object.keys(catalog);
 
             return new UpdateTables(tables);
-        })
+        }),
+        this.authErrorHandler()
     );
 
     @Effect()
@@ -81,7 +94,8 @@ export class DataEffects {
 
             let columns = ds[state.data.tableName].attributes;
             return new UpdateColumns(columns);
-        })
+        }),
+        this.authErrorHandler()
     );
 
     @Effect()

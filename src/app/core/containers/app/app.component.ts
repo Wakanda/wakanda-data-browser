@@ -2,10 +2,13 @@ import { Component } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 import * as fromRoot from '../../../reducers';
 import * as layoutActions from '../../actions/layout';
 import * as routerActions from '../../actions/router';
+
+import { LoginDialogComponent } from '../../components/login-dialog/login-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -17,18 +20,39 @@ export class AppComponent {
   showSidenav$: Observable<boolean>;
   tables$: Observable<Array<string>>;
   tableName$: Observable<string>;
+  showLogin$: Observable<boolean>;
 
-  constructor(private store: Store<fromRoot.State>) {
+  userName: string;
+  password: string;
+  dialogRef: MatDialogRef<LoginDialogComponent>;
+
+  constructor(private store: Store<fromRoot.State>, private dialog: MatDialog) {
     this.showSidenav$ = this.store.pipe(select(fromRoot.getShowSidenav));
     this.tables$ = this.store.pipe(select(fromRoot.getTables));
     this.tableName$ = this.store.pipe(select(fromRoot.getTableName));
+    this.showLogin$ = this.store.pipe(select(fromRoot.getShowLogin));
+
+    this.showLogin$.subscribe(showLogin => {
+      if (showLogin) {
+        this.dialogRef = this.dialog.open(LoginDialogComponent, {
+          // width: '250px',
+          data: { userName: this.userName, password: this.password }
+        });
+      } else {
+        this.dialogRef && this.dialogRef.close();
+      }
+    });
   }
 
   switchTable(tableName) {
-    this.store.dispatch(new routerActions.SwitchTable({table: tableName}));
+    this.store.dispatch(new routerActions.SwitchTable({ table: tableName }));
   }
 
   toggleSideNav() {
     this.store.dispatch(new layoutActions.ToggleSidenav());
+  }
+
+  login() {
+    
   }
 }

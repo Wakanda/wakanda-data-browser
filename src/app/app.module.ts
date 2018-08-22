@@ -23,12 +23,14 @@ import { CustomRouterStateSerializer } from './shared/utils';
 import { AppComponent } from './core/containers/app/app.component';
 import { DataTableComponent } from './core/components/data-table/data-table.component';
 import { CellComponent } from './core/components/cell/cell.component';
+import { LoginDialogComponent } from './core/components/login-dialog/login-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DataTableComponent,
-    CellComponent
+    CellComponent,
+    LoginDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,6 +42,7 @@ import { CellComponent } from './core/components/cell/cell.component';
     FormsModule,
     EffectsModule.forRoot([DataEffects, RouterEffects]),
   ],
+  entryComponents: [AppComponent, LoginDialogComponent],
   providers: [
     Wakanda,
     { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer }
