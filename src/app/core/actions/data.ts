@@ -47,8 +47,6 @@ export class UpdateColumns implements Action {
 
 export class FetchTables implements Action {
     readonly type = DataActionTypes.FetchTables;
-
-    constructor(public payload?: string) { }
 }
 
 export class UpdateTables implements Action {
