@@ -17,6 +17,7 @@ import {
 } from '../actions/router';
 
 import * as dataActions from '../actions/data';
+import * as layoutActions from '../actions/layout';
 import { Wakanda } from '../../wakanda';
 
 
@@ -103,6 +104,9 @@ export class RouterEffects {
                     .then(c => {
                         let tables = Object.keys(c);
                         this.store$.dispatch(new SwitchTable({ table: tables[0] })); // <- navigate to first table here
+                    })
+                    .catch(error => {
+                        this.store$.dispatch(new layoutActions.ShowLogin());
                     });
             } else if (!params.page || !params.pageSize) {
                 this.store$.dispatch(new UpdatePageOptions({

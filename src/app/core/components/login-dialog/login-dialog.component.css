@@ -1,0 +1,9 @@
+.form-input {
+    display: block;
+}
+
+.warn .mat-form-field-ripple {
+    opacity: 1;
+    background-color: red;
+    transform: scaleX(1);
+}

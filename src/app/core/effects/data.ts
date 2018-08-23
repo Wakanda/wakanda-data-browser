@@ -1,30 +1,45 @@
 import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { from } from 'rxjs';
-import { switchMap, mergeMap, withLatestFrom, map } from 'rxjs/operators';
+import { from, of, Observable } from 'rxjs';
+import { switchMap, withLatestFrom, map, catchError, tap, filter } from 'rxjs/operators';
 
-import { State } from '../../reducers';
 import { Wakanda } from '../../wakanda';
+import { isAuthError } from '../../shared/utils'
+import { State } from '../../reducers';
 import {
     FetchData,
     FetchColumns,
-    ChangeOptions,
     UpdateData,
     UpdateColumns,
     FetchTables,
     UpdateTables,
     DataActionTypes,
-    RemoveRows
+    RemoveRows,
+    Login,
 } from '../actions/data';
-import * as routerActions from '../actions/router';
+import * as layoutActions from '../actions/layout';
+
+const NOPE_OBSERVABLE = new Observable();
 
 @Injectable()
 export class DataEffects {
+
+    getCatalogOrLogin() {
+        return from(this.wakanda.getCatalog())
+            .pipe(catchError(error => {
+                if (isAuthError(error)) {
+                    this.store$.dispatch(new layoutActions.ShowLogin());
+                }
+
+                return NOPE_OBSERVABLE;
+            }));
+    }
+
     @Effect()
     fetch$ = this.actions$.pipe(
         ofType<FetchData>(DataActionTypes.FetchData),
-        switchMap(() => this.wakanda.getCatalog()),
+        switchMap(() => this.getCatalogOrLogin()),
         withLatestFrom(this.store$),
         switchMap(([ds, state]: [any, State]) => {
             let query = state.data.query;
@@ -48,21 +63,14 @@ export class DataEffects {
                 entities: response.entities,
                 length: response._count
             });
-        })
+        }),
     );
 
     @Effect()
     fetchTables = this.actions$.pipe(
         ofType<FetchTables>(DataActionTypes.FetchTables),
-        mergeMap(action => {
-            return new Promise((resolve, reject) => {
-                this.wakanda.getCatalog()
-                    .then(c => {
-                        resolve([c, action.payload]);
-                    });
-            })
-        }),
-        map(([catalog, table]) => {
+        switchMap(() => this.getCatalogOrLogin()),
+        map(catalog => {
             let tables = Object.keys(catalog);
 
             return new UpdateTables(tables);
@@ -72,9 +80,7 @@ export class DataEffects {
     @Effect()
     fetchColumns$ = this.actions$.pipe(
         ofType<FetchColumns>(DataActionTypes.FetchColumns),
-        switchMap(() => {
-            return from(this.wakanda.getCatalog());
-        }),
+        switchMap(() => this.getCatalogOrLogin()),
         withLatestFrom(this.store$),
         map(([ds, state]: [any, State]) => {
             let tableName = state.data.tableName;
@@ -94,6 +100,35 @@ export class DataEffects {
         }),
         map(result => {
             return new FetchData();
+        })
+    );
+
+    @Effect()
+    login$ = this.actions$.pipe(
+        ofType<Login>(DataActionTypes.Login),
+        switchMap(action => {
+            return from(
+                this.wakanda.directory.login(
+                    action.userName, action.password
+                )
+            ).pipe(
+                catchError(err => {
+                    return from([false]);
+                })
+            );
+        }),
+        switchMap((result) => {
+            if (result) {
+                return [
+                    new layoutActions.LoginSuccess(),
+                    new FetchColumns(),
+                    new FetchTables(),
+                    new FetchData()
+                ];
+            } else {
+                this.store$.dispatch(new layoutActions.LoginFailure());
+                return [];
+            }
         })
     );
 

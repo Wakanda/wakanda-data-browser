@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import Entity  from 'wakanda-client/dist/presentation/entity'
+import Entity from 'wakanda-client/dist/presentation/entity'
 import {
     ColumnKinds,
     ColumnTypes
@@ -17,6 +17,7 @@ export enum DataActionTypes {
     UpdateTables = '[Data] Update Tables',
     FetchTables = '[Data] Fetch Tables',
     RemoveRows = '[Data] Remove Rows',
+    Login = '[Data] Login',
 }
 
 export class FetchData implements Action {
@@ -47,8 +48,6 @@ export class UpdateColumns implements Action {
 
 export class FetchTables implements Action {
     readonly type = DataActionTypes.FetchTables;
-
-    constructor(public payload?: string) { }
 }
 
 export class UpdateTables implements Action {
@@ -63,5 +62,12 @@ export class RemoveRows implements Action {
     constructor(public rows: Array<Entity>) { }
 }
 
+export class Login implements Action {
+    readonly type = DataActionTypes.Login;
+
+    constructor(public userName: string, public password: string) { }
+}
+
 export type DataAction = FetchData | ChangeOptions | UpdateData |
-    FetchColumns | UpdateColumns | UpdateTables | FetchTables | RemoveRows;
+    FetchColumns | UpdateColumns | UpdateTables | FetchTables |
+    RemoveRows | Login;

@@ -33,3 +33,7 @@ export class CustomRouterStateSerializer
     return { url, params, queryParams };
   }
 }
+
+export function isAuthError(err) {
+  return err.statusCode === 401;
+}
