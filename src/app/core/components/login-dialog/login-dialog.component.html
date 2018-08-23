@@ -1,11 +1,12 @@
 <h1 mat-dialog-title>Sign in</h1>
 <mat-dialog-content>
-  <mat-form-field class="form-input">
-    <input matInput placeholder="User name" [(ngModel)]="userName" cdkFocusInitial/>
+  <mat-form-field class="form-input" [class.warn]="loginFailed$ | async">
+    <input matInput placeholder="User name" [(ngModel)]="userName" (keydown.enter)="login()" cdkFocusInitial/>
   </mat-form-field>
-  <mat-form-field class="form-input">
-    <input matInput placeholder="Password" type="password" [(ngModel)]="password" />
+  <mat-form-field class="form-input" [class.warn]="loginFailed$ | async">
+    <input matInput placeholder="Password" type="password" [(ngModel)]="password" (keydown.enter)="login()" />
   </mat-form-field>
+  <mat-error *ngIf="loginFailed$ | async">Login failed</mat-error>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button (click)="login()">Login</button>

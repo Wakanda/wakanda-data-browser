@@ -1,8 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from '../../../reducers';
 import * as data from '../../actions/data';
+import { Observable } from 'rxjs';
 
 export interface DialogData {
   userName: string;
@@ -12,22 +13,29 @@ export interface DialogData {
 @Component({
   selector: 'app-login-dialog',
   templateUrl: './login-dialog.component.html',
-  styleUrls: ['./login-dialog.component.css']
+  styleUrls: ['./login-dialog.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class LoginDialogComponent implements OnInit {
 
   userName: string;
   password: string;
+  loginFailed$: Observable<boolean>
 
   constructor(
-    public dialogRef: MatDialogRef<LoginDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private store: Store<fromRoot.State>) { }
+    public dialogRef: MatDialogRef<LoginDialogComponent>,
+    private store: Store<fromRoot.State>
+  ) {
+    this.loginFailed$ = this.store.pipe(select(fromRoot.getLoginFailed));
+  }
 
   ngOnInit() {
   }
 
   login() {
-    this.store.dispatch(new data.Login(this.userName, this.password));
+    this.store.dispatch(
+      new data.Login(this.userName, this.password)
+    );
   }
 }

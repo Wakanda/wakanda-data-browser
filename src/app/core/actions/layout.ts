@@ -5,7 +5,8 @@ export enum LayoutActionTypes {
     CloseSidenav = '[Layout] Close Sidenav',
     ToggleSidenav = '[Layout] Toggle Sidenav',
     ShowLogin = '[Layout] Show Login',
-    HideLogin = '[Layout] Hide Login',
+    LoginSuccess = '[Layout] Login Success',
+    LoginFailure = '[Layout] Login Failure',
 }
 
 export class OpenSidenav implements Action {
@@ -24,9 +25,13 @@ export class ShowLogin implements Action {
     readonly type = LayoutActionTypes.ShowLogin;
 }
 
-export class HideLogin implements Action {
-    readonly type = LayoutActionTypes.HideLogin;
+export class LoginSuccess implements Action {
+    readonly type = LayoutActionTypes.LoginSuccess;
+}
+
+export class LoginFailure implements Action {
+    readonly type = LayoutActionTypes.LoginFailure;
 }
 
 export type LayoutAction = OpenSidenav | CloseSidenav | ToggleSidenav |
-    ShowLogin | HideLogin;
+    ShowLogin | LoginSuccess | LoginFailure;

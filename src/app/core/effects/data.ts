@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { from, of } from 'rxjs';
-import { switchMap, withLatestFrom, map, catchError } from 'rxjs/operators';
+import { from, of, Observable } from 'rxjs';
+import { switchMap, withLatestFrom, map, catchError, tap, filter } from 'rxjs/operators';
 
 import { Wakanda } from '../../wakanda';
 import { isAuthError } from '../../shared/utils'
@@ -16,9 +16,11 @@ import {
     UpdateTables,
     DataActionTypes,
     RemoveRows,
-    Login
+    Login,
 } from '../actions/data';
 import * as layoutActions from '../actions/layout';
+
+const NOPE_OBSERVABLE = new Observable();
 
 @Injectable()
 export class DataEffects {
@@ -30,7 +32,7 @@ export class DataEffects {
                     this.store$.dispatch(new layoutActions.ShowLogin());
                 }
 
-                throw error;
+                return NOPE_OBSERVABLE;
             }));
     }
 
@@ -105,11 +107,28 @@ export class DataEffects {
     login$ = this.actions$.pipe(
         ofType<Login>(DataActionTypes.Login),
         switchMap(action => {
-            return from(this.wakanda.directory.login(action.userName, action.password));
+            return from(
+                this.wakanda.directory.login(
+                    action.userName, action.password
+                )
+            ).pipe(
+                catchError(err => {
+                    return from([false]);
+                })
+            );
         }),
-        map(() => {
-            this.store$.dispatch(new layoutActions.HideLogin());
-            window.location.reload();
+        switchMap((result) => {
+            if (result) {
+                return [
+                    new layoutActions.LoginSuccess(),
+                    new FetchColumns(),
+                    new FetchTables(),
+                    new FetchData()
+                ];
+            } else {
+                this.store$.dispatch(new layoutActions.LoginFailure());
+                return [];
+            }
         })
     );
 
