@@ -37,6 +37,7 @@ export class DataTableComponent implements OnInit {
     this.pageSize$ = this.store.pipe(select(fromRoot.getPageSize));
     this.length$ = this.store.pipe(select(fromRoot.getLength));
     this.columns$ = this.store.pipe(select(fromRoot.getColumns));
+    
     this.columnNames$ = this.columns$.pipe(
       map((columns: Array<{ name: string }>) => {
         let columnNames = columns.map(c => c.name);
@@ -44,6 +45,7 @@ export class DataTableComponent implements OnInit {
         return columnNames;
       })
     );
+
     this.pageIndex$ = this.store.pipe(
       select(fromRoot.getStart),
       withLatestFrom(this.pageSize$),
