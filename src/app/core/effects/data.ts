@@ -22,20 +22,21 @@ import * as layoutActions from '../actions/layout';
 @Injectable()
 export class DataEffects {
 
-    authErrorHandler() {
-        return catchError(error => {
-            if (isAuthError(error)) {
-                this.store$.dispatch(new layoutActions.ShowLogin());
-            }
-            
-            throw error;
-        });
+    getCatalogOrLogin() {
+        return from(this.wakanda.getCatalog())
+            .pipe(catchError(error => {
+                if (isAuthError(error)) {
+                    this.store$.dispatch(new layoutActions.ShowLogin());
+                }
+
+                throw error;
+            }));
     }
 
     @Effect()
     fetch$ = this.actions$.pipe(
         ofType<FetchData>(DataActionTypes.FetchData),
-        switchMap(() => this.wakanda.getCatalog()),
+        switchMap(() => this.getCatalogOrLogin()),
         withLatestFrom(this.store$),
         switchMap(([ds, state]: [any, State]) => {
             let query = state.data.query;
@@ -60,42 +61,30 @@ export class DataEffects {
                 length: response._count
             });
         }),
-        this.authErrorHandler()
     );
 
     @Effect()
     fetchTables = this.actions$.pipe(
         ofType<FetchTables>(DataActionTypes.FetchTables),
-        switchMap(action => {
-            return new Promise((resolve, reject) => {
-                this.wakanda.getCatalog()
-                    .then(c => {
-                        resolve([c, action.payload]);
-                    });
-            })
-        }),
+        switchMap(() => this.getCatalogOrLogin()),
         map(catalog => {
             let tables = Object.keys(catalog);
 
             return new UpdateTables(tables);
-        }),
-        this.authErrorHandler()
+        })
     );
 
     @Effect()
     fetchColumns$ = this.actions$.pipe(
         ofType<FetchColumns>(DataActionTypes.FetchColumns),
-        switchMap(() => {
-            return from(this.wakanda.getCatalog());
-        }),
+        switchMap(() => this.getCatalogOrLogin()),
         withLatestFrom(this.store$),
         map(([ds, state]: [any, State]) => {
             let tableName = state.data.tableName;
 
             let columns = ds[state.data.tableName].attributes;
             return new UpdateColumns(columns);
-        }),
-        this.authErrorHandler()
+        })
     );
 
     @Effect()
