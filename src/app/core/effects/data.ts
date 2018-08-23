@@ -15,7 +15,8 @@ import {
     FetchTables,
     UpdateTables,
     DataActionTypes,
-    RemoveRows
+    RemoveRows,
+    Login
 } from '../actions/data';
 import * as layoutActions from '../actions/layout';
 
@@ -97,6 +98,18 @@ export class DataEffects {
         }),
         map(result => {
             return new FetchData();
+        })
+    );
+
+    @Effect()
+    login$ = this.actions$.pipe(
+        ofType<Login>(DataActionTypes.Login),
+        switchMap(action => {
+            return from(this.wakanda.directory.login(action.userName, action.password));
+        }),
+        map(() => {
+            this.store$.dispatch(new layoutActions.HideLogin());
+            window.location.reload();
         })
     );
 
