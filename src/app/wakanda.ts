@@ -14,7 +14,7 @@ export class Wakanda {
          * 
          * More info available at : https://wakanda.github.io/doc/#/guide?section=main-data-cs-instance
          */
-        this.client = new WakandaClient({ host: 'http://localhost:8081' });
+        this.client = new WakandaClient({ host: 'http://127.0.0.1:8081' });
         this.catalog = null;
     }
 
@@ -33,7 +33,7 @@ export class Wakanda {
                 return c;
             });
         }
-
+        
         /**
          * Return the cached version of the catalog
          */
