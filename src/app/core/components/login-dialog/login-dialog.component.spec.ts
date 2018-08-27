@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { FormsModule } from '@angular/forms';
 import { LoginDialogComponent } from './login-dialog.component';
+import { MaterialModule } from '../../../material'
+import { StoreModule, Store } from '@ngrx/store';
+import * as fromRoot from '../../../reducers'
 
 describe('LoginDialogComponent', () => {
   let component: LoginDialogComponent;
@@ -8,9 +13,19 @@ describe('LoginDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LoginDialogComponent ]
+      declarations: [LoginDialogComponent],
+      imports: [
+        BrowserAnimationsModule,
+        FormsModule,
+        MaterialModule,
+        StoreModule.forRoot(fromRoot.reducers)
+      ],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: {} },
+        { provide: MatDialogRef, useValue: {} }
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
