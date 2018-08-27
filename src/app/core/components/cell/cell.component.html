@@ -1,19 +1,20 @@
-<div *ngIf="column.kind=='storage'">
-    <div *ngIf="column.type==='bool'; else notBoolean">
+<div *ngIf="column.kind === 'storage'">
+    <div *ngIf="column.type === 'bool'">
         <mat-checkbox [checked]="value" disabled="true"></mat-checkbox>
     </div>
-    <ng-template #notBoolean>
-        <div *ngIf="column.type==='object'; else notObject">
-            {{value | json}}
-        </div>
-        <ng-template #notObject>
-            {{value}}
-        </ng-template>
-    </ng-template>
+    <div *ngIf="column.type === 'date'">
+        {{value | date: 'short'}}
+    </div>
+    <div *ngIf="column.type === 'object'">
+        {{value | json}}
+    </div>
+    <div *ngIf="isSimple()">
+        {{value}}
+    </div>
 </div>
-<div *ngIf="column.kind=='relatedEntity'">
+<div *ngIf="column.kind === 'relatedEntity'">
     <a (click)="displayRelatedEntity()" class="link">show</a>
 </div>
-<div *ngIf="column.kind=='relatedEntities'">
+<div *ngIf="column.kind === 'relatedEntities'">
     <a (click)="displayRelatedEntities()" class="link">show</a>
 </div>
