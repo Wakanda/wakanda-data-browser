@@ -12,7 +12,7 @@ import { testData } from './testData';
 
 import * as fromRoot from '../../../reducers';
 import { DataTableComponent } from './data-table.component';
-import { DebugElement } from '@angular/core/src/debug/debug_node';
+import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
 @Component({ selector: 'app-cell', template: '' })
@@ -86,7 +86,7 @@ describe('DataTableComponent', () => {
    */
   it('should have a default pageSize of testData.entities.length', async(() => {
     component.pageSize$.pipe(first())
-      .subscribe((pageSize) => {
+      .subscribe(pageSize => {
         expect(pageSize).toEqual(testData.entities.length);
       });
   }));
