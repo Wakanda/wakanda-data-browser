@@ -31,9 +31,7 @@ export class DataTableComponent implements OnInit {
   pageIndex$: Observable<number>;
   pageSize$: Observable<number>;
   length$: Observable<number>;
-  tableName$: Observable<string>;
 
-  tableName: string;
   pageSizeOptions = [20, 40, 80, 100];
   selection: SelectionModel<Entity> = new SelectionModel<Entity>(true, []);
 
@@ -42,11 +40,6 @@ export class DataTableComponent implements OnInit {
     this.pageSize$ = this.store.pipe(select(fromRoot.getPageSize));
     this.length$ = this.store.pipe(select(fromRoot.getLength));
     this.columns$ = this.store.pipe(select(fromRoot.getColumns));
-    this.tableName$ = this.store.pipe(select(fromRoot.getTableName));
-
-    this.tableName$.subscribe(name => {
-      this.tableName = name;
-    });
 
     this.columnNames$ = this.columns$.pipe(
       map((columns: Array<{ name: string }>) => {
@@ -113,7 +106,7 @@ export class DataTableComponent implements OnInit {
   addEntity() {
     this.newEntityDialogRef = this.dialog.open(EntityDialogComponent, {
       // width: '250px',
-      data: { tableName: this.tableName }
+      data: {}
     });
   }
 }
