@@ -4,6 +4,12 @@ import {
     ColumnTypes
 } from '../models/data';
 
+export interface Column {
+    type: ColumnTypes,
+    kind: ColumnKinds, 
+    name: string,
+}
+
 export interface State {
     query: string;
     tableName: string;
@@ -11,7 +17,7 @@ export interface State {
     start: number;
     length: number;
     rows: Array<any>;
-    columns: Array<{type: ColumnTypes, kind: ColumnKinds, name: string}>;
+    columns: Array<Column>;
     tables: Array<string>;
 }
 
