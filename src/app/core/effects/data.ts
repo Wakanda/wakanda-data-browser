@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { from, of, Observable } from 'rxjs';
-import { switchMap, withLatestFrom, map, catchError, tap, filter } from 'rxjs/operators';
+import { switchMap, withLatestFrom, map, catchError } from 'rxjs/operators';
 
 import { Wakanda } from '../../wakanda';
 import { isAuthError } from '../../shared/utils'
@@ -17,6 +17,7 @@ import {
     DataActionTypes,
     RemoveRows,
     Login,
+    AddRow,
 } from '../actions/data';
 import * as layoutActions from '../actions/layout';
 
@@ -128,6 +129,31 @@ export class DataEffects {
             } else {
                 this.store$.dispatch(new layoutActions.LoginFailure());
                 return [];
+            }
+        })
+    );
+
+    @Effect()
+    addRow$ = this.actions$.pipe(
+        ofType<AddRow>(DataActionTypes.AddRow),
+        withLatestFrom(this.store$, this.wakanda.getCatalog()),
+        switchMap(([action, store, ds]) => {
+            let tableName = store.data.tableName;
+            let entity = ds[tableName].create(action.values);
+
+            return from(
+                entity.save()
+            ).pipe(
+                catchError(err => {
+                    return from([false]);
+                })
+            );
+        }),
+        map(result => {
+            if(result !== false) {
+                return new FetchData();
+            } else {
+                return null;
             }
         })
     );

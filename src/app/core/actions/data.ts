@@ -18,6 +18,7 @@ export enum DataActionTypes {
     FetchTables = '[Data] Fetch Tables',
     RemoveRows = '[Data] Remove Rows',
     Login = '[Data] Login',
+    AddRow = '[Data] Add Row',
 }
 
 export class FetchData implements Action {
@@ -68,6 +69,12 @@ export class Login implements Action {
     constructor(public userName: string, public password: string) { }
 }
 
+export class AddRow implements Action {
+    readonly type = DataActionTypes.AddRow;
+
+    constructor(public values: any) { }
+}
+
 export type DataAction = FetchData | ChangeOptions | UpdateData |
     FetchColumns | UpdateColumns | UpdateTables | FetchTables |
-    RemoveRows | Login;
+    RemoveRows | Login | AddRow;

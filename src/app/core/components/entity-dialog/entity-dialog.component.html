@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Add new {{tableName$ | async}} entity</h1>
 <mat-dialog-content>
   <mat-form-field *ngFor="let column of columns$ | async" class="form-input">
-    <input matInput [placeholder]="column.name" (keydown.enter)="save()" />
+    <input matInput [(ngModel)]="values[column.name]" [placeholder]="column.name" (keydown.enter)="save()" />
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
