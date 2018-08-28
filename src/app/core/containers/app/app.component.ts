@@ -24,7 +24,7 @@ export class AppComponent {
 
   userName: string;
   password: string;
-  dialogRef: MatDialogRef<LoginDialogComponent>;
+  loginDialogRef: MatDialogRef<LoginDialogComponent>;
 
   constructor(private store: Store<fromRoot.State>, private dialog: MatDialog) {
     this.showSidenav$ = this.store.pipe(select(fromRoot.getShowSidenav));
@@ -34,12 +34,12 @@ export class AppComponent {
 
     this.showLogin$.subscribe(showLogin => {
       if (showLogin) {
-        this.dialogRef = this.dialog.open(LoginDialogComponent, {
+        this.loginDialogRef = this.dialog.open(LoginDialogComponent, {
           // width: '250px',
           data: { userName: this.userName, password: this.password }
         });
       } else {
-        this.dialogRef && this.dialogRef.close();
+        this.loginDialogRef && this.loginDialogRef.close();
       }
     });
   }
