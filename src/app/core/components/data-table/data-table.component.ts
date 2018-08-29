@@ -1,9 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs';
-import { withLatestFrom, map } from 'rxjs/operators';
+import { withLatestFrom, map, skip } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from '../../../reducers';
 import * as data from '../../actions/data';
+import * as layout from '../../actions/layout';
 import * as router from '../../actions/router';
 import { EntityDialogComponent } from '../entity-dialog/entity-dialog.component';
 
@@ -22,7 +23,7 @@ import Entity from 'wakanda-client/dist/presentation/entity';
 })
 export class DataTableComponent implements OnInit {
 
-  newEntityDialogRef: MatDialogRef<EntityDialogComponent>;
+  addRowDialogRef: MatDialogRef<EntityDialogComponent>;
   query$: Observable<string>;
   data$: Observable<MatTableDataSource<Entity>>;
   dataSource: MatTableDataSource<Entity>;
@@ -65,6 +66,19 @@ export class DataTableComponent implements OnInit {
         return this.dataSource;
       })
     );
+
+    this.store
+      .pipe(select(fromRoot.getShowAddRow), skip(1))
+      .subscribe(showAddRow => {
+        if (showAddRow) {
+          this.addRowDialogRef = this.dialog.open(EntityDialogComponent, {
+            // width: '250px',
+            data: {}
+          });
+        } else {
+          this.addRowDialogRef.close();
+        }
+      });
   }
 
   ngOnInit() {
@@ -104,9 +118,6 @@ export class DataTableComponent implements OnInit {
   }
 
   addEntity() {
-    this.newEntityDialogRef = this.dialog.open(EntityDialogComponent, {
-      // width: '250px',
-      data: {}
-    });
+    this.store.dispatch(new layout.ShowAddRow());
   }
 }

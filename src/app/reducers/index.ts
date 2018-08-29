@@ -37,6 +37,10 @@ export const getLoginFailed = createSelector(
     getLayoutState,
     fromLayout.getLoginFailed
 );
+export const getShowAddRow = createSelector(
+    getLayoutState,
+    fromLayout.getShowAddRow
+);
 export const getQuery = createSelector(
     getDataState,
     fromData.getQuery

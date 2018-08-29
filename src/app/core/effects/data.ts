@@ -17,7 +17,11 @@ import {
     DataActionTypes,
     RemoveRows,
     Login,
+    LoginSuccess,
+    LoginFailure,
     AddRow,
+    AddRowSuccess,
+    AddRowFailure,
 } from '../actions/data';
 import * as layoutActions from '../actions/layout';
 
@@ -95,6 +99,7 @@ export class DataEffects {
     removeRows$ = this.actions$.pipe(
         ofType<RemoveRows>(DataActionTypes.RemoveRows),
         map(action => {
+            // TODO: handle failure
             return Promise.all(action.rows.map(row => {
                 return row.delete();
             }));
@@ -118,19 +123,32 @@ export class DataEffects {
                 })
             );
         }),
-        switchMap((result) => {
+        map((result) => {
             if (result) {
-                return [
-                    new layoutActions.LoginSuccess(),
-                    new FetchColumns(),
-                    new FetchTables(),
-                    new FetchData()
-                ];
+                return new LoginSuccess();
             } else {
-                this.store$.dispatch(new layoutActions.LoginFailure());
-                return [];
+                return new LoginFailure();
             }
         })
+    );
+
+    @Effect()
+    loginSuccess$ = this.actions$.pipe(
+        ofType<LoginSuccess>(DataActionTypes.LoginSuccess),
+        switchMap(() => {
+            return [
+                new FetchColumns(),
+                new FetchTables(),
+                new FetchData(),
+                new layoutActions.LoginSuccess(),
+            ];
+        })
+    );
+
+    @Effect()
+    loginFailure$ = this.actions$.pipe(
+        ofType<LoginFailure>(DataActionTypes.LoginFailure),
+        map(() => new layoutActions.LoginFailure())
     );
 
     @Effect()
@@ -141,21 +159,29 @@ export class DataEffects {
             let tableName = store.data.tableName;
             let entity = ds[tableName].create(action.values);
 
-            return from(
-                entity.save()
-            ).pipe(
-                catchError(err => {
-                    return from([false]);
-                })
-            );
+            return from(entity.save())
+                .pipe(
+                    catchError(err => {
+                        return from([false]);
+                    })
+                );
         }),
         map(result => {
-            if(result !== false) {
-                return new FetchData();
+            if (result !== false) {
+                return new AddRowSuccess();
             } else {
-                return null;
+                return new AddRowFailure(); // TODO
             }
         })
+    );
+
+    @Effect()
+    addRowSuccess$ = this.actions$.pipe(
+        ofType<AddRowSuccess>(DataActionTypes.AddRowSuccess),
+        switchMap(() => [
+            new FetchData(),
+            new layoutActions.HideAddRow(),
+        ])
     );
 
     constructor(

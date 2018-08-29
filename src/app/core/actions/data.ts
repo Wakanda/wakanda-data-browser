@@ -18,7 +18,11 @@ export enum DataActionTypes {
     FetchTables = '[Data] Fetch Tables',
     RemoveRows = '[Data] Remove Rows',
     Login = '[Data] Login',
+    LoginSuccess = '[Data] Login Success',
+    LoginFailure = '[Data] Login Failure',
     AddRow = '[Data] Add Row',
+    AddRowSuccess = '[Data] Add Row Success',
+    AddRowFailure = '[Data] Add Row Failure',
 }
 
 export class FetchData implements Action {
@@ -69,12 +73,38 @@ export class Login implements Action {
     constructor(public userName: string, public password: string) { }
 }
 
+export class LoginSuccess implements Action {
+    readonly type = DataActionTypes.LoginSuccess;
+
+    constructor() { }
+}
+
+export class LoginFailure implements Action {
+    readonly type = DataActionTypes.LoginFailure;
+
+    constructor() { }
+}
+
 export class AddRow implements Action {
     readonly type = DataActionTypes.AddRow;
 
     constructor(public values: any) { }
 }
 
-export type DataAction = FetchData | ChangeOptions | UpdateData |
-    FetchColumns | UpdateColumns | UpdateTables | FetchTables |
-    RemoveRows | Login | AddRow;
+export class AddRowSuccess implements Action {
+    readonly type = DataActionTypes.AddRowSuccess;
+
+    constructor() { }
+}
+
+export class AddRowFailure implements Action {
+    readonly type = DataActionTypes.AddRowFailure;
+
+    constructor() { }
+}
+
+export type DataAction = FetchData | FetchTables | FetchColumns
+    | UpdateData | UpdateColumns | UpdateTables
+    | ChangeOptions
+    | RemoveRows | AddRow | AddRowSuccess | AddRowFailure
+    | Login | LoginSuccess | LoginFailure;
