@@ -36,7 +36,8 @@ export class AppComponent {
       if (showLogin) {
         this.loginDialogRef = this.dialog.open(LoginDialogComponent, {
           // width: '250px',
-          data: { userName: this.userName, password: this.password }
+          data: { userName: this.userName, password: this.password },
+          disableClose: true
         });
       } else {
         this.loginDialogRef && this.loginDialogRef.close();

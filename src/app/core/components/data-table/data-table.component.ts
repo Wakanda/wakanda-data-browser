@@ -73,7 +73,8 @@ export class DataTableComponent implements OnInit {
         if (showAddRow) {
           this.addRowDialogRef = this.dialog.open(EntityDialogComponent, {
             // width: '250px',
-            data: {}
+            data: {},
+            disableClose: true
           });
         } else {
           this.addRowDialogRef.close();

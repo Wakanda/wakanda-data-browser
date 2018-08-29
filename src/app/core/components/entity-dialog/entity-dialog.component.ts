@@ -9,6 +9,7 @@ import { ColumnKinds } from '../../models/data';
 import { Column } from '../../reducers/data';
 import * as data from '../../actions/data';
 import * as fromRoot from '../../../reducers';
+import { HideAddRow } from '../../actions/layout';
 
 export interface DialogData {
 
@@ -50,6 +51,10 @@ export class EntityDialogComponent implements OnInit {
 
   save() {
     this.store.dispatch(new data.AddRow(this.values));
+  }
+
+  close() {
+    this.store.dispatch(new HideAddRow());
   }
 
 }
