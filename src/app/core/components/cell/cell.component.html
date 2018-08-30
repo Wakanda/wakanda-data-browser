@@ -1,22 +1,6 @@
 <div *ngIf="column.kind === 'storage'">
-    <div *ngIf="column.type === 'bool'">
-        <mat-checkbox [checked]="value" disabled="true"></mat-checkbox>
-    </div>
-    <div *ngIf="column.simpleDate">
-        {{value | date: 'longDate'}}
-    </div>
-    <div *ngIf="column.type === 'date' && !column.simpleDate">
-        {{value | date: 'medium'}}
-    </div>
-    <div *ngIf="column.type === 'object'">
-        {{value | json}}
-    </div>
-    <div *ngIf="column.type === 'image' && value.uri">
-        <img [src]="value.uri">
-    </div>
-    <div *ngIf="isSimple()">
-        {{value}}
-    </div>
+    <app-cell-storage-value [column]="column" [value]="value">
+    </app-cell-storage-value>
 </div>
 <div *ngIf="column.kind === 'relatedEntity'">
     <a (click)="displayRelatedEntity()" class="link">show</a>

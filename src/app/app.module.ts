@@ -25,6 +25,8 @@ import { DataTableComponent } from './core/components/data-table/data-table.comp
 import { CellComponent } from './core/components/cell/cell.component';
 import { LoginDialogComponent } from './core/components/login-dialog/login-dialog.component';
 import { EntityDialogComponent } from './core/components/entity-dialog/entity-dialog.component';
+import { CellStorageValueComponent } from './core/components/cell-storage-value/cell-storage-value.component';
+import { ImageDialogComponent } from './core/components/image-dialog/image-dialog.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,8 @@ import { EntityDialogComponent } from './core/components/entity-dialog/entity-di
     CellComponent,
     LoginDialogComponent,
     EntityDialogComponent,
+    CellStorageValueComponent,
+    ImageDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,7 +51,8 @@ import { EntityDialogComponent } from './core/components/entity-dialog/entity-di
   entryComponents: [
     AppComponent,
     LoginDialogComponent,
-    EntityDialogComponent
+    EntityDialogComponent,
+    ImageDialogComponent,
   ],
   providers: [
     Wakanda,

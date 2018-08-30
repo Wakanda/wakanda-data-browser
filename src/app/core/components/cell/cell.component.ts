@@ -19,10 +19,6 @@ export class CellComponent implements OnInit {
 
   ngOnInit() { }
 
-  isSimple() {
-    return ['number', 'string'].indexOf(typeof (this.value)) >= 0;
-  }
-
   displayRelatedEntity() {
     let table = this.value._dataClass;
     let tableName = table.name;
