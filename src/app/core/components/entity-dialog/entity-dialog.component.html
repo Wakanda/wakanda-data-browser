@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Add new {{tableName$ | async}} entity</h1>
+<mat-dialog-content>
+  <mat-form-field *ngFor="let column of columns$ | async" class="form-input">
+    <input matInput [(ngModel)]="values[column.name]" [placeholder]="column.name" (keydown.enter)="save()" />
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="save" mat-button (click)="save()">Add</button>
+  <button class="close" mat-button (click)="close()">Cancel</button>
+</mat-dialog-actions>

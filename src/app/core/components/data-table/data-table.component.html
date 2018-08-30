@@ -1,5 +1,6 @@
 <mat-form-field class="example-form-field">
-  <input matInput type="text" placeholder="Query string" [value]="query$ | async" (change)="queryStringChange($event)" class="query" />
+  <input matInput type="text" placeholder="Query string" [value]="query$ | async" (change)="queryStringChange($event)" class="query"
+  />
   <button mat-button *ngIf="query$ | async" matSuffix mat-icon-button aria-label="Clear" (click)="resetQuery()" class="clear">
     <mat-icon>close</mat-icon>
   </button>
@@ -8,9 +9,13 @@
   </button>
 </mat-form-field>
 <div id="row">
-  <mat-paginator #paginator [length]="length$ | async" [pageIndex]="pageIndex$ | async" [pageSize]="pageSize$ | async" [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)">
+  <mat-paginator #paginator [length]="length$ | async" [pageIndex]="pageIndex$ | async" [pageSize]="pageSize$ | async" [pageSizeOptions]="pageSizeOptions"
+    (page)="handlePageEvent($event)">
   </mat-paginator>
-  <button mat-icon-button [matMenuTriggerFor]="menu">
+  <button mat-mini-fab color="primary" (click)="addEntity()">
+    <mat-icon>add</mat-icon>
+  </button>
+  <button class="menu" mat-icon-button [matMenuTriggerFor]="menu">
     <mat-icon>more_vert</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
@@ -23,14 +28,11 @@
 <mat-table #table [dataSource]="data$ | async" *ngIf="data$ | async">
   <ng-container matColumnDef="select">
     <mat-header-cell *matHeaderCellDef>
-      <mat-checkbox (change)="$event ? toggleSelectAll($event) : null"
-                        [checked]="isAllSelected()">
+      <mat-checkbox (change)="$event ? toggleSelectAll($event) : null" [checked]="isAllSelected()">
       </mat-checkbox>
     </mat-header-cell>
     <mat-cell *matCellDef="let row">
-      <mat-checkbox (click)="$event.stopPropagation()"
-                        (change)="$event ? this.selection.toggle(row) : null"
-                        [checked]="selection.isSelected(row)">
+      <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? this.selection.toggle(row) : null" [checked]="selection.isSelected(row)">
       </mat-checkbox>
     </mat-cell>
   </ng-container>

@@ -1,0 +1,14 @@
+#image-dialog {
+    padding: 0px;
+}
+
+#image-dialog .mat-dialog-actions {
+    margin-bottom: 0px;
+    padding: 0px;
+    flex-direction: row-reverse;
+}
+
+#image-dialog .mat-dialog-content {
+    margin: 0px;
+    padding: 0px;
+}

@@ -1,12 +1,14 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs';
-import { withLatestFrom, map } from 'rxjs/operators';
+import { withLatestFrom, map, skip } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from '../../../reducers';
 import * as data from '../../actions/data';
+import * as layout from '../../actions/layout';
 import * as router from '../../actions/router';
+import { EntityDialogComponent } from '../entity-dialog/entity-dialog.component';
 
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 // import { query } from '@angular/animations';
 
@@ -21,6 +23,7 @@ import Entity from 'wakanda-client/dist/presentation/entity';
 })
 export class DataTableComponent implements OnInit {
 
+  addRowDialogRef: MatDialogRef<EntityDialogComponent>;
   query$: Observable<string>;
   data$: Observable<MatTableDataSource<Entity>>;
   dataSource: MatTableDataSource<Entity>;
@@ -29,15 +32,16 @@ export class DataTableComponent implements OnInit {
   pageIndex$: Observable<number>;
   pageSize$: Observable<number>;
   length$: Observable<number>;
+
   pageSizeOptions = [20, 40, 80, 100];
   selection: SelectionModel<Entity> = new SelectionModel<Entity>(true, []);
 
-  constructor(private store: Store<fromRoot.State>, private cd: ChangeDetectorRef) {
+  constructor(private store: Store<fromRoot.State>, private cd: ChangeDetectorRef, private dialog: MatDialog) {
     this.query$ = this.store.pipe(select(fromRoot.getQuery));
     this.pageSize$ = this.store.pipe(select(fromRoot.getPageSize));
     this.length$ = this.store.pipe(select(fromRoot.getLength));
     this.columns$ = this.store.pipe(select(fromRoot.getColumns));
-    
+
     this.columnNames$ = this.columns$.pipe(
       map((columns: Array<{ name: string }>) => {
         let columnNames = columns.map(c => c.name);
@@ -62,6 +66,20 @@ export class DataTableComponent implements OnInit {
         return this.dataSource;
       })
     );
+
+    this.store
+      .pipe(select(fromRoot.getShowAddRow), skip(1))
+      .subscribe(showAddRow => {
+        if (showAddRow) {
+          this.addRowDialogRef = this.dialog.open(EntityDialogComponent, {
+            // width: '250px',
+            data: {},
+            disableClose: true
+          });
+        } else {
+          this.addRowDialogRef.close();
+        }
+      });
   }
 
   ngOnInit() {
@@ -98,5 +116,9 @@ export class DataTableComponent implements OnInit {
 
   removeSelectedRows() {
     this.store.dispatch(new data.RemoveRows(this.selection.selected));
+  }
+
+  addEntity() {
+    this.store.dispatch(new layout.ShowAddRow());
   }
 }

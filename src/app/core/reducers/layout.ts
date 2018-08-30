@@ -4,12 +4,14 @@ export interface State {
     showSidenav: boolean;
     showLogin: boolean;
     loginFailed: boolean;
+    showAddRow: boolean;
 }
 
 const initialState: State = {
     showSidenav: true,
     showLogin: false,
     loginFailed: false,
+    showAddRow: false,
 };
 
 export function reducer(
@@ -47,11 +49,23 @@ export function reducer(
                 showLogin: false,
                 loginFailed: false
             };
-            
+
         case LayoutActionTypes.LoginFailure:
             return {
                 ...state,
                 loginFailed: true,
+            };
+
+        case LayoutActionTypes.ShowAddRow:
+            return {
+                ...state,
+                showAddRow: true,
+            };
+
+        case LayoutActionTypes.HideAddRow:
+            return {
+                ...state,
+                showAddRow: false,
             };
 
         default:
@@ -62,3 +76,4 @@ export function reducer(
 export const getShowSidenav = (state: State) => state.showSidenav;
 export const getShowLogin = (state: State) => state.showLogin;
 export const getLoginFailed = (state: State) => state.loginFailed;
+export const getShowAddRow = (state: State) => state.showAddRow;

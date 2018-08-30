@@ -9,10 +9,14 @@
     background-color: #fff;
 }
 
-#row button {
+#row button.menu {
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: 50px;
+}
+
+#row button {
+    box-shadow: none;
 }
 
 .mat-paginator {

@@ -17,13 +17,7 @@ export class CellComponent implements OnInit {
 
   constructor(private store: Store<fromRoot.State>) { }
 
-  ngOnInit() {
-    
-  }
-
-  isSimple() {
-    return ['number', 'string'].indexOf(typeof (this.value)) >= 0;
-  }
+  ngOnInit() { }
 
   displayRelatedEntity() {
     let table = this.value._dataClass;
