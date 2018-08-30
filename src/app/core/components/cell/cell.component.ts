@@ -17,9 +17,7 @@ export class CellComponent implements OnInit {
 
   constructor(private store: Store<fromRoot.State>) { }
 
-  ngOnInit() {
-    
-  }
+  ngOnInit() { }
 
   isSimple() {
     return ['number', 'string'].indexOf(typeof (this.value)) >= 0;
