@@ -4,10 +4,12 @@ mat-sidenav-container {
 
 mat-sidenav {
     padding: 1rem;
+    padding-top: 0.5rem;
 }
 
 mat-sidenav-content {
     padding: 1rem;
+    padding-top: 0.5rem;
 }
 
 .table {
