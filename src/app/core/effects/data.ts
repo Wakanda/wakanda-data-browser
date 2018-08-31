@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { from, of, Observable } from 'rxjs';
-import { switchMap, withLatestFrom, map, catchError } from 'rxjs/operators';
+import { switchMap, withLatestFrom, map, catchError, tap } from 'rxjs/operators';
 
 import { Wakanda } from '../../wakanda';
 import { isAuthError } from '../../shared/utils'
@@ -10,8 +10,10 @@ import { State } from '../../reducers';
 import {
     FetchData,
     FetchColumns,
+    FetchUser,
     UpdateData,
     UpdateColumns,
+    UpdateUser,
     FetchTables,
     UpdateTables,
     DataActionTypes,
@@ -19,6 +21,7 @@ import {
     Login,
     LoginSuccess,
     LoginFailure,
+    Logout,
     AddRow,
     AddRowSuccess,
     AddRowFailure,
@@ -137,6 +140,7 @@ export class DataEffects {
         ofType<LoginSuccess>(DataActionTypes.LoginSuccess),
         switchMap(() => {
             return [
+                new FetchUser(),
                 new FetchColumns(),
                 new FetchTables(),
                 new FetchData(),
@@ -150,6 +154,39 @@ export class DataEffects {
         ofType<LoginFailure>(DataActionTypes.LoginFailure),
         map(() => new layoutActions.LoginFailure())
     );
+
+    @Effect()
+    fetchUser$ = this.actions$.pipe(
+        ofType<FetchUser>(DataActionTypes.FetchUser),
+        switchMap(() => {
+            return from(
+                this.wakanda.directory.getCurrentUser()
+            ).pipe(
+                catchError(err => {
+                    return from([null]);
+                })
+            );
+        }),
+        map(user => {
+            return new UpdateUser(user);
+        })
+    );
+
+    @Effect()
+    logout$ = this.actions$.pipe(
+        ofType<Logout>(DataActionTypes.Logout),
+        switchMap(() => {
+            return from(this.wakanda.directory.logout())
+                .pipe(
+                    catchError(() => {
+                        return of(false);
+                    })
+                )
+        }),
+        tap(()=>{
+            window.location.reload();
+        })
+    )
 
     @Effect()
     addRow$ = this.actions$.pipe(

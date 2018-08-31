@@ -12,3 +12,6 @@
     <mat-icon>refresh</mat-icon>
   </button>
 </mat-form-field>
+<button mat-button matSuffix mat-icon-button aria-label="logout" (click)="logout()" class="logout" *ngIf="loggedIn$ | async">
+  <mat-icon title="Logout">exit_to_app</mat-icon>
+</button>

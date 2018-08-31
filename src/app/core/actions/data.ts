@@ -12,6 +12,8 @@ export enum DataActionTypes {
     ChangeOptions = '[Data] Change Options',
     FetchData = '[Data] Fetch Data',
     UpdateData = '[Data] Update Data',
+    UpdateUser = '[Data] Update User',
+    FetchUser = '[Data] Fetch User',
     FetchColumns = '[Data] Fetch Columns',
     UpdateColumns = '[Data] Update Columns',
     UpdateTables = '[Data] Update Tables',
@@ -20,6 +22,7 @@ export enum DataActionTypes {
     Login = '[Data] Login',
     LoginSuccess = '[Data] Login Success',
     LoginFailure = '[Data] Login Failure',
+    Logout = '[Data] Logout',
     AddRow = '[Data] Add Row',
     AddRowSuccess = '[Data] Add Row Success',
     AddRowFailure = '[Data] Add Row Failure',
@@ -39,6 +42,18 @@ export class UpdateData implements Action {
     readonly type = DataActionTypes.UpdateData;
 
     constructor(public payload: { entities: Array<any>, length: number }) { }
+}
+
+export class UpdateUser implements Action {
+    readonly type = DataActionTypes.UpdateUser;
+
+    constructor(public payload: { [key: string]: any; }) { }
+}
+
+export class FetchUser implements Action {
+    readonly type = DataActionTypes.FetchUser;
+
+    constructor() { }
 }
 
 export class FetchColumns implements Action {
@@ -85,6 +100,12 @@ export class LoginFailure implements Action {
     constructor() { }
 }
 
+export class Logout implements Action {
+    readonly type = DataActionTypes.Logout;
+
+    constructor() { }
+}
+
 export class AddRow implements Action {
     readonly type = DataActionTypes.AddRow;
 
@@ -103,8 +124,8 @@ export class AddRowFailure implements Action {
     constructor() { }
 }
 
-export type DataAction = FetchData | FetchTables | FetchColumns
-    | UpdateData | UpdateColumns | UpdateTables
+export type DataAction = FetchData | FetchTables | FetchColumns | FetchUser
+    | UpdateData | UpdateColumns | UpdateTables | UpdateUser
     | ChangeOptions
     | RemoveRows | AddRow | AddRowSuccess | AddRowFailure
-    | Login | LoginSuccess | LoginFailure;
+    | Login | LoginSuccess | LoginFailure | Logout;

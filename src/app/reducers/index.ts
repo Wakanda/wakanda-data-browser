@@ -73,3 +73,7 @@ export const getTables = createSelector(
     getDataState,
     fromData.getTables
 );
+export const getUser = createSelector(
+    getDataState,
+    fromData.getUser
+);

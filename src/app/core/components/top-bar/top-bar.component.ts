@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 
 import * as fromRoot from '../../../reducers';
@@ -16,10 +17,15 @@ export class TopBarComponent implements OnInit {
 
   query$: Observable<string>;
   showSidenav$: Observable<boolean>;
+  loggedIn$: Observable<boolean>;
 
   constructor(private store: Store<fromRoot.State>) {
     this.query$ = this.store.pipe(select(fromRoot.getQuery));
     this.showSidenav$ = this.store.pipe(select(fromRoot.getShowSidenav));
+    this.loggedIn$ = this.store.pipe(
+      select(fromRoot.getUser),
+      map(user => user !== null)
+    );
   }
 
   ngOnInit() {
@@ -39,6 +45,10 @@ export class TopBarComponent implements OnInit {
 
   toggleSideNav() {
     this.store.dispatch(new layout.ToggleSidenav());
+  }
+
+  logout() {
+    this.store.dispatch(new data.Logout());
   }
 
 }

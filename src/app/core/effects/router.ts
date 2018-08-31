@@ -130,6 +130,7 @@ export class RouterEffects {
                 this.store$.dispatch(new dataActions.FetchColumns());
                 this.store$.dispatch(new dataActions.FetchTables());
                 this.store$.dispatch(new dataActions.FetchData());
+                this.store$.dispatch(new dataActions.FetchUser());
             }
 
         })

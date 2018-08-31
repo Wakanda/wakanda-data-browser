@@ -1,0 +1,10 @@
+button.logout {
+    margin-left: auto;
+}
+
+:host {
+    display: flex;
+    align-items: baseline;
+    flex-direction: row;
+    justify-content: flex-start;
+}

@@ -6,7 +6,7 @@ import {
 
 export interface Column {
     type: ColumnTypes,
-    kind: ColumnKinds, 
+    kind: ColumnKinds,
     name: string,
 }
 
@@ -19,6 +19,7 @@ export interface State {
     rows: Array<any>;
     columns: Array<Column>;
     tables: Array<string>;
+    user: { [key: string]: any }
 }
 
 const initialState: State = {
@@ -30,6 +31,7 @@ const initialState: State = {
     rows: [],
     columns: [],
     tables: [],
+    user: null
 };
 
 export function reducer(
@@ -40,38 +42,44 @@ export function reducer(
 
         case DataActionTypes.ChangeOptions:
             let payload = action.payload;
-            
+
             let pageSize = payload.pageSize !== undefined ? payload.pageSize : state.pageSize;
             let start = payload.pageIndex !== undefined ? payload.pageIndex * pageSize : state.start;
             let query = payload.query !== undefined ? payload.query : state.query;
             let tableName = payload.tableName !== undefined ? payload.tableName : state.tableName;
-            
+
             return {
                 ...state,
                 pageSize,
                 start,
                 query,
                 tableName
-            };    
+            };
 
         case DataActionTypes.UpdateData:
             return {
                 ...state,
                 rows: action.payload.entities,
                 length: action.payload.length
-            };      
+            };
 
         case DataActionTypes.UpdateColumns:
             return {
                 ...state,
                 columns: action.payload
-            };        
+            };
 
         case DataActionTypes.UpdateTables:
             return {
                 ...state,
                 tables: action.payload
-            };        
+            };
+
+        case DataActionTypes.UpdateUser:
+            return {
+                ...state,
+                user: action.payload
+            };
 
         default:
             return state;
@@ -86,3 +94,4 @@ export const getTableName = (state: State) => state.tableName;
 export const getColumns = (state: State) => state.columns;
 export const getStart = (state: State) => state.start;
 export const getTables = (state: State) => state.tables;
+export const getUser = (state: State) => state.user;
