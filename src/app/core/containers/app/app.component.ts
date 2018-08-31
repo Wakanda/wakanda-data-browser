@@ -5,8 +5,8 @@ import { Observable } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
 import * as fromRoot from '../../../reducers';
-import * as layoutActions from '../../actions/layout';
-import * as routerActions from '../../actions/router';
+import * as layout from '../../actions/layout';
+import * as router from '../../actions/router';
 
 import { LoginDialogComponent } from '../../components/login-dialog/login-dialog.component';
 
@@ -46,11 +46,11 @@ export class AppComponent {
   }
 
   switchTable(tableName) {
-    this.store.dispatch(new routerActions.SwitchTable({ table: tableName }));
+    this.store.dispatch(new router.SwitchTable({ table: tableName }));
   }
 
   toggleSideNav() {
-    this.store.dispatch(new layoutActions.ToggleSidenav());
+    this.store.dispatch(new layout.ToggleSidenav());
   }
 
   login() {

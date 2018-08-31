@@ -1,0 +1,14 @@
+<button mat-button matSuffix mat-icon-button aria-label="Show" (click)="toggleSideNav()" *ngIf="!(showSidenav$ | async)"
+  class="menu-toggle">
+  <mat-icon title="Show">menu</mat-icon>
+</button>
+<mat-form-field>
+  <input matInput type="text" placeholder="Query string" [value]="query$ | async" (change)="queryStringChange($event)" class="query"
+  />
+  <button mat-button *ngIf="query$ | async" matSuffix mat-icon-button aria-label="Clear" (click)="resetQuery()" class="clear">
+    <mat-icon>close</mat-icon>
+  </button>
+  <button mat-button matSuffix mat-icon-button aria-label="Refresh" (click)="refreshResult()" class="refresh">
+    <mat-icon>refresh</mat-icon>
+  </button>
+</mat-form-field>

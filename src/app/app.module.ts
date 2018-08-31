@@ -27,6 +27,7 @@ import { LoginDialogComponent } from './core/components/login-dialog/login-dialo
 import { EntityDialogComponent } from './core/components/entity-dialog/entity-dialog.component';
 import { CellStorageValueComponent } from './core/components/cell-storage-value/cell-storage-value.component';
 import { ImageDialogComponent } from './core/components/image-dialog/image-dialog.component';
+import { TopBarComponent } from './core/components/top-bar/top-bar.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { ImageDialogComponent } from './core/components/image-dialog/image-dialo
     EntityDialogComponent,
     CellStorageValueComponent,
     ImageDialogComponent,
+    TopBarComponent,
   ],
   imports: [
     BrowserModule,

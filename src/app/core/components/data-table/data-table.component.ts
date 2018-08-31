@@ -24,7 +24,7 @@ import Entity from 'wakanda-client/dist/presentation/entity';
 export class DataTableComponent implements OnInit {
 
   addRowDialogRef: MatDialogRef<EntityDialogComponent>;
-  query$: Observable<string>;
+  
   data$: Observable<MatTableDataSource<Entity>>;
   dataSource: MatTableDataSource<Entity>;
   columns$;
@@ -37,7 +37,7 @@ export class DataTableComponent implements OnInit {
   selection: SelectionModel<Entity> = new SelectionModel<Entity>(true, []);
 
   constructor(private store: Store<fromRoot.State>, private cd: ChangeDetectorRef, private dialog: MatDialog) {
-    this.query$ = this.store.pipe(select(fromRoot.getQuery));
+    
     this.pageSize$ = this.store.pipe(select(fromRoot.getPageSize));
     this.length$ = this.store.pipe(select(fromRoot.getLength));
     this.columns$ = this.store.pipe(select(fromRoot.getColumns));
@@ -87,18 +87,6 @@ export class DataTableComponent implements OnInit {
 
   handlePageEvent(event) {
     this.store.dispatch(new router.UpdatePageOptions(event));
-  }
-
-  queryStringChange(event) {
-    this.store.dispatch(new router.UpdateQuery(event.currentTarget.value));
-  }
-
-  resetQuery() {
-    this.store.dispatch(new router.UpdateQuery(""));
-  }
-
-  refreshResult() {
-    this.store.dispatch(new data.FetchData());
   }
 
   isAllSelected() {

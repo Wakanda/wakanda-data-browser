@@ -1,13 +1,3 @@
-<mat-form-field class="example-form-field">
-  <input matInput type="text" placeholder="Query string" [value]="query$ | async" (change)="queryStringChange($event)" class="query"
-  />
-  <button mat-button *ngIf="query$ | async" matSuffix mat-icon-button aria-label="Clear" (click)="resetQuery()" class="clear">
-    <mat-icon>close</mat-icon>
-  </button>
-  <button mat-button matSuffix mat-icon-button aria-label="Refresh" (click)="refreshResult()" class="refresh">
-    <mat-icon>refresh</mat-icon>
-  </button>
-</mat-form-field>
 <div id="row">
   <mat-paginator #paginator [length]="length$ | async" [pageIndex]="pageIndex$ | async" [pageSize]="pageSize$ | async" [pageSizeOptions]="pageSizeOptions"
     (page)="handlePageEvent($event)">
