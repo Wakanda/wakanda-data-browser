@@ -26,6 +26,7 @@ export class EntityDialogComponent implements OnInit {
   columns$: Observable<Array<Column>>
   tableName$: Observable<string>;
   values: any = {};
+  columns: Array<any>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -35,13 +36,15 @@ export class EntityDialogComponent implements OnInit {
     this.tableName$ = this.store.pipe(select(fromRoot.getTableName));
     this.columns$ = this.store.pipe(
       select(fromRoot.getColumns),
-      map(columns => {
-        return columns.filter(column => {
+      map(_columns => {
+        this.columns = _columns.filter(column => {
           return [
             ColumnKinds.RelatedEntities,
             ColumnKinds.calculated
           ].indexOf(column.kind) === -1;
         });
+
+        return this.columns;
       })
     );
   }
@@ -50,11 +53,34 @@ export class EntityDialogComponent implements OnInit {
   }
 
   save() {
-    this.store.dispatch(new data.AddRow(this.values));
+    let _values = {
+      ...this.values
+    };
+    this.columns.forEach(column => {
+      if (column.simpleDate) {
+        let value: Date = _values[column.name];
+        let day = ('0' + value.getDate()).slice(-2);
+        let month = ('0' + (value.getMonth() + 1)).slice(-2);
+        let year = value.getFullYear();
+        _values[column.name] = `${day}!${month}!${year}`;
+      }
+    });
+
+    this.store.dispatch(new data.AddRow(_values));
   }
 
   close() {
     this.store.dispatch(new HideAddRow());
+  }
+
+  isNumerical(column) {
+    return [
+      'long',
+      'long64',
+      'number',
+      'word',
+      'byte'
+    ].indexOf(column.type) > -1;
   }
 
 }

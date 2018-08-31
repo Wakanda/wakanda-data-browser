@@ -1,8 +1,24 @@
 <h1 mat-dialog-title>Add new {{tableName$ | async}} entity</h1>
 <mat-dialog-content>
-  <mat-form-field *ngFor="let column of columns$ | async" class="form-input">
-    <input matInput [(ngModel)]="values[column.name]" [placeholder]="column.name" (keydown.enter)="save()" />
-  </mat-form-field>
+  <div *ngFor="let column of columns$ | async">
+    <mat-checkbox *ngIf="column.type === 'bool'" [(ngModel)]="values[column.name]"> {{column.name}}</mat-checkbox>
+    <mat-form-field *ngIf="column.type === 'string'" class="form-input">
+      <input matInput [(ngModel)]="values[column.name]" [placeholder]="column.name" (keydown.enter)="save()" />
+    </mat-form-field>
+    <mat-form-field *ngIf="isNumerical(column)" class="form-input">
+      <input matInput type="number" [(ngModel)]="values[column.name]" [placeholder]="column.name" (keydown.enter)="save()" />
+    </mat-form-field>
+    <mat-form-field *ngIf="column.simpleDate === true">
+      <input matInput [(ngModel)]="values[column.name]" [matDatepicker]="picker" placeholder="Choose a date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field *ngIf="column.type === 'date' && !column.simpleDate">
+      <input matInput [(ngModel)]="values[column.name]" [matDatepicker]="picker" placeholder="Choose a date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button class="save" mat-button (click)="save()">Add</button>
