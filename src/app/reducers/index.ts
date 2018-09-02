@@ -29,10 +29,6 @@ export const getShowSidenav = createSelector(
     getLayoutState,
     fromLayout.getShowSidenav
 );
-export const getShowLogin = createSelector(
-    getLayoutState,
-    fromLayout.getShowLogin
-);
 export const getLoginFailed = createSelector(
     getLayoutState,
     fromLayout.getLoginFailed

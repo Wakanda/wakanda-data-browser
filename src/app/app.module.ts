@@ -18,6 +18,7 @@ import { reducers } from './reducers';
 import { routes } from './routes';
 import { DataEffects } from './core/effects/data';
 import { RouterEffects } from './core/effects/router';
+import { LayoutEffects } from './core/effects/layout';
 import { CustomRouterStateSerializer } from './shared/utils';
 
 import { AppComponent } from './core/containers/app/app.component';
@@ -48,7 +49,7 @@ import { TopBarComponent } from './core/components/top-bar/top-bar.component';
     StoreRouterConnectingModule.forRoot({ stateKey: 'router' }),
     MaterialModule,
     FormsModule,
-    EffectsModule.forRoot([DataEffects, RouterEffects]),
+    EffectsModule.forRoot([DataEffects, RouterEffects, LayoutEffects]),
   ],
   entryComponents: [
     AppComponent,

@@ -10,6 +10,7 @@ export enum DataActionTypes {
     ResetQuery = '[Data] Reset Query',
     SetQuery = '[Data] Set Query',
     ChangeOptions = '[Data] Change Options',
+    Fetch = '[Data] Fetch',
     FetchData = '[Data] Fetch Data',
     UpdateData = '[Data] Update Data',
     UpdateUser = '[Data] Update User',
@@ -48,6 +49,12 @@ export class UpdateUser implements Action {
     readonly type = DataActionTypes.UpdateUser;
 
     constructor(public payload: { [key: string]: any; }) { }
+}
+
+export class Fetch implements Action {
+    readonly type = DataActionTypes.Fetch;
+
+    constructor() { }
 }
 
 export class FetchUser implements Action {
@@ -124,7 +131,7 @@ export class AddRowFailure implements Action {
     constructor() { }
 }
 
-export type DataAction = FetchData | FetchTables | FetchColumns | FetchUser
+export type DataAction = Fetch | FetchData | FetchTables | FetchColumns | FetchUser
     | UpdateData | UpdateColumns | UpdateTables | UpdateUser
     | ChangeOptions
     | RemoveRows | AddRow | AddRowSuccess | AddRowFailure

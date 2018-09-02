@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { from, of } from 'rxjs';
+import { map, withLatestFrom, catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
-import { ROUTER_NAVIGATION, RouterNavigationAction } from '@ngrx/router-store';
+import { ROUTER_NAVIGATION } from '@ngrx/router-store';
 
 import { State } from '../../reducers';
 import {
@@ -13,12 +14,14 @@ import {
     UpdatePageOptions,
     UpdateQuery,
     RouterActionTypes,
+    Initialize,
     RouterAction
 } from '../actions/router';
 
 import * as dataActions from '../actions/data';
 import * as layoutActions from '../actions/layout';
 import { Wakanda } from '../../wakanda';
+import { state } from '@angular/animations';
 
 
 @Injectable()
@@ -27,7 +30,9 @@ export class RouterEffects {
     navigate$ = this.actions$.pipe(
         ofType<Go>(RouterActionTypes.Go),
         map((action: Go) => action.payload),
-        map(({ path, query: queryParams, extras }) => this.router.navigate(path, { queryParams, ...extras }))
+        map(({ path, query: queryParams, extras }) => {
+            this.router.navigate(path, { queryParams, ...extras })
+        })
     );
 
     @Effect()
@@ -39,6 +44,7 @@ export class RouterEffects {
             let query = params.query || "";
             let table = params.table || "";
             let currentParams = state.router.state.queryParams;
+
             return new Go({
                 path: [''],
                 query: {
@@ -89,8 +95,31 @@ export class RouterEffects {
         })
     );
 
-    @Effect({ dispatch: false })
-    routeChange = this.actions$.pipe(
+    @Effect()
+    initialize$ = this.actions$.pipe(
+        ofType<Initialize>(RouterActionTypes.Initialize),
+        switchMap(action => {
+            return from(this.wakanda.getCatalog())
+                .pipe(catchError(() => {
+                    return of({ error: true });
+                }));
+        }),
+        withLatestFrom(this.store$),
+        map(([catalog, store]) => {
+            if (catalog.error) {
+                return new layoutActions.ShowLogin();
+            } else {
+                if (store.router.state.queryParams.table) {
+                    return new dataActions.Fetch();
+                } else {
+                    return new SwitchTable({ table: Object.keys(catalog)[0] });
+                }
+            }
+        })
+    )
+
+    @Effect()
+    routeChange$ = this.actions$.pipe(
         ofType(ROUTER_NAVIGATION),
         map((action: any) => {
             let { queryParams } = action.payload.routerState;
@@ -100,19 +129,12 @@ export class RouterEffects {
         withLatestFrom(this.store$),
         map(([params, state]) => {
             if (!params.table) {
-                this.wakanda.getCatalog()
-                    .then(c => {
-                        let tables = Object.keys(c);
-                        this.store$.dispatch(new SwitchTable({ table: tables[0] })); // <- navigate to first table here
-                    })
-                    .catch(error => {
-                        this.store$.dispatch(new layoutActions.ShowLogin());
-                    });
+                return new Initialize();
             } else if (!params.page || !params.pageSize) {
-                this.store$.dispatch(new UpdatePageOptions({
+                return new UpdatePageOptions({
                     pageSize: state.data.pageSize,
                     pageIndex: state.data.start / state.data.pageSize,
-                }));
+                });
             } else {
                 let pageSize = parseInt(params.pageSize);
                 let pageIndex = parseInt(params.page);
@@ -127,10 +149,8 @@ export class RouterEffects {
                     tableName,
                     query
                 }));
-                this.store$.dispatch(new dataActions.FetchColumns());
-                this.store$.dispatch(new dataActions.FetchTables());
-                this.store$.dispatch(new dataActions.FetchData());
-                this.store$.dispatch(new dataActions.FetchUser());
+
+                return new dataActions.Fetch();
             }
 
         })

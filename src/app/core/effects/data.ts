@@ -8,6 +8,8 @@ import { Wakanda } from '../../wakanda';
 import { isAuthError } from '../../shared/utils'
 import { State } from '../../reducers';
 import {
+    DataActionTypes,
+    Fetch,
     FetchData,
     FetchColumns,
     FetchUser,
@@ -16,7 +18,6 @@ import {
     UpdateUser,
     FetchTables,
     UpdateTables,
-    DataActionTypes,
     RemoveRows,
     Login,
     LoginSuccess,
@@ -27,6 +28,7 @@ import {
     AddRowFailure,
 } from '../actions/data';
 import * as layoutActions from '../actions/layout';
+import * as routerActions from '../actions/router';
 
 const NOPE_OBSERVABLE = new Observable();
 
@@ -45,7 +47,7 @@ export class DataEffects {
     }
 
     @Effect()
-    fetch$ = this.actions$.pipe(
+    fetchData$ = this.actions$.pipe(
         ofType<FetchData>(DataActionTypes.FetchData),
         switchMap(() => this.getCatalogOrLogin()),
         withLatestFrom(this.store$),
@@ -78,10 +80,13 @@ export class DataEffects {
     fetchTables = this.actions$.pipe(
         ofType<FetchTables>(DataActionTypes.FetchTables),
         switchMap(() => this.getCatalogOrLogin()),
-        map(catalog => {
+        switchMap(catalog => {
             let tables = Object.keys(catalog);
 
-            return new UpdateTables(tables);
+            return [
+                new UpdateTables(tables),
+                new FetchColumns(),
+            ];
         })
     );
 
@@ -90,11 +95,18 @@ export class DataEffects {
         ofType<FetchColumns>(DataActionTypes.FetchColumns),
         switchMap(() => this.getCatalogOrLogin()),
         withLatestFrom(this.store$),
-        map(([ds, state]: [any, State]) => {
+        switchMap(([ds, state]: [any, State]) => {
             let tableName = state.data.tableName;
 
-            let columns = ds[state.data.tableName].attributes;
-            return new UpdateColumns(columns);
+            if (!tableName) {
+                debugger;
+            }
+
+            let columns = ds[tableName].attributes;
+            return [
+                new UpdateColumns(columns),
+                new FetchData(),
+            ];
         })
     );
 
@@ -136,15 +148,23 @@ export class DataEffects {
     );
 
     @Effect()
+    fetch$ = this.actions$.pipe(
+        ofType<Fetch>(DataActionTypes.Fetch),
+        switchMap(() => {
+            return [
+                new FetchUser(),
+                new FetchTables,
+            ];
+        })
+    );
+
+    @Effect()
     loginSuccess$ = this.actions$.pipe(
         ofType<LoginSuccess>(DataActionTypes.LoginSuccess),
         switchMap(() => {
             return [
-                new FetchUser(),
-                new FetchColumns(),
-                new FetchTables(),
-                new FetchData(),
                 new layoutActions.LoginSuccess(),
+                new routerActions.Initialize(),
             ];
         })
     );
@@ -172,7 +192,7 @@ export class DataEffects {
         })
     );
 
-    @Effect()
+    @Effect({ dispatch: false })
     logout$ = this.actions$.pipe(
         ofType<Logout>(DataActionTypes.Logout),
         switchMap(() => {
@@ -183,7 +203,7 @@ export class DataEffects {
                     })
                 )
         }),
-        tap(()=>{
+        tap(() => {
             window.location.reload();
         })
     )

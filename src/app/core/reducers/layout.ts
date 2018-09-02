@@ -2,14 +2,12 @@ import { LayoutActionTypes, LayoutAction } from '../actions/layout';
 
 export interface State {
     showSidenav: boolean;
-    showLogin: boolean;
     loginFailed: boolean;
     showAddRow: boolean;
 }
 
 const initialState: State = {
     showSidenav: true,
-    showLogin: false,
     loginFailed: false,
     showAddRow: false,
 };
@@ -37,16 +35,9 @@ export function reducer(
                 showSidenav: !state.showSidenav,
             };
 
-        case LayoutActionTypes.ShowLogin:
-            return {
-                ...state,
-                showLogin: true,
-            };
-
         case LayoutActionTypes.LoginSuccess:
             return {
                 ...state,
-                showLogin: false,
                 loginFailed: false
             };
 
@@ -74,6 +65,5 @@ export function reducer(
 }
 
 export const getShowSidenav = (state: State) => state.showSidenav;
-export const getShowLogin = (state: State) => state.showLogin;
 export const getLoginFailed = (state: State) => state.loginFailed;
 export const getShowAddRow = (state: State) => state.showAddRow;

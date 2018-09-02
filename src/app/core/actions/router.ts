@@ -8,6 +8,7 @@ export const enum RouterActionTypes {
   SwitchTable = '[Router] Switch Table',
   UpdateQuery = '[Router] Update Query',
   UpdatePageOptions = '[Router] Update Page Options',
+  Initialize = '[Router] Initialize'
 };
 
 export class Go implements Action {
@@ -46,4 +47,8 @@ export class Forward implements Action {
   readonly type = RouterActionTypes.Forward;
 }
 
-export type RouterAction = Go | SwitchTable | UpdateQuery | UpdatePageOptions | Back | Forward;
+export class Initialize implements Action {
+  readonly type = RouterActionTypes.Initialize;
+}
+
+export type RouterAction = Go | SwitchTable | UpdateQuery | UpdatePageOptions | Back | Forward | Initialize;
