@@ -14,6 +14,7 @@ import {
 import { MaterialModule } from './material';
 
 import { Wakanda } from './wakanda';
+import { Config } from './config';
 import { reducers } from './reducers';
 import { routes } from './routes';
 import { DataEffects } from './core/effects/data';
@@ -59,6 +60,7 @@ import { TopBarComponent } from './core/components/top-bar/top-bar.component';
   ],
   providers: [
     Wakanda,
+    Config,
     { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer }
   ],
   bootstrap: [AppComponent]

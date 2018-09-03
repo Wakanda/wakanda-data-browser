@@ -10,8 +10,8 @@
 <div *ngIf="column.type === 'object'">
   {{value | json}}
 </div>
-<div *ngIf="column.type === 'image' && value.uri">
-  <img [src]="value.uri" (click)="previewImage()">
+<div *ngIf="column.type === 'image' && value && value.uri">
+  <img [src]="getImageURL()" (click)="previewImage()">
 </div>
 <div *ngIf="isSimple()">
   {{value}}

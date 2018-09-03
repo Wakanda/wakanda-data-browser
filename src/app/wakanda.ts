@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { WakandaClient } from 'wakanda-client/browser/no-promise';
+import { Config } from './config';
 
 @Injectable()
 export class Wakanda {
@@ -7,14 +8,14 @@ export class Wakanda {
     private client: WakandaClient;
     private catalog;
 
-    constructor() {
+    constructor(private config: Config) {
         /**
          * You can pass in the `host` property if you are connecting to a different host:
          * this._client = new WakandaClient({ host: 'http://127.0.0.1:8081' });
          * 
          * More info available at : https://wakanda.github.io/doc/#/guide?section=main-data-cs-instance
          */
-        this.client = new WakandaClient({ host: 'http://127.0.0.1:8081' });
+        this.client = new WakandaClient({ host: this.config.host });
         this.catalog = null;
     }
 
@@ -33,7 +34,7 @@ export class Wakanda {
                 return c;
             });
         }
-        
+
         /**
          * Return the cached version of the catalog
          */

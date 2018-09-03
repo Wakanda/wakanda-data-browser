@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
+import { Config } from '../../../config';
 
 @Component({
   selector: 'app-cell-storage-value',
@@ -14,7 +15,7 @@ export class CellStorageValueComponent implements OnInit {
 
   imageDiagRef: MatDialogRef<ImageDialogComponent>;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog, private config: Config) { }
 
   ngOnInit() { }
 
@@ -27,9 +28,13 @@ export class CellStorageValueComponent implements OnInit {
       disableClose: true,
       id: 'image-dialog',
       data: {
-        uri: this.value.uri,
+        uri: this.getImageURL(),
       }
     });
+  }
+
+  getImageURL() {
+    return (this.config.host + '/' + this.value.uri).replace(/([^:]\/)\/+/g, "$1");
   }
 
 }
