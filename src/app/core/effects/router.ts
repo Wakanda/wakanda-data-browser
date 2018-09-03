@@ -4,7 +4,6 @@ import { Store } from '@ngrx/store';
 import { from, of } from 'rxjs';
 import { map, withLatestFrom, catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-
 import { ROUTER_NAVIGATION } from '@ngrx/router-store';
 
 import { State } from '../../reducers';
@@ -21,8 +20,6 @@ import {
 import * as dataActions from '../actions/data';
 import * as layoutActions from '../actions/layout';
 import { Wakanda } from '../../wakanda';
-import { state } from '@angular/animations';
-
 
 @Injectable()
 export class RouterEffects {
@@ -108,15 +105,13 @@ export class RouterEffects {
         map(([catalog, store]) => {
             if (catalog.error) {
                 return new layoutActions.ShowLogin();
+            } else if (store.router.state.queryParams.table) {
+                return new dataActions.Fetch();
             } else {
-                if (store.router.state.queryParams.table) {
-                    return new dataActions.Fetch();
-                } else {
-                    return new SwitchTable({ table: Object.keys(catalog)[0] });
-                }
+                return new SwitchTable({ table: Object.keys(catalog)[0] });
             }
         })
-    )
+    );
 
     @Effect()
     routeChange$ = this.actions$.pipe(
@@ -152,7 +147,6 @@ export class RouterEffects {
 
                 return new dataActions.Fetch();
             }
-
         })
     );
 
