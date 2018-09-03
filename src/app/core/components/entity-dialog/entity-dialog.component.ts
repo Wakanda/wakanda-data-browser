@@ -59,6 +59,11 @@ export class EntityDialogComponent implements OnInit {
     this.columns.forEach(column => {
       if (column.simpleDate) {
         let value: Date = _values[column.name];
+
+        if (!value) {
+          return;
+        }
+
         let day = ('0' + value.getDate()).slice(-2);
         let month = ('0' + (value.getMonth() + 1)).slice(-2);
         let year = value.getFullYear();

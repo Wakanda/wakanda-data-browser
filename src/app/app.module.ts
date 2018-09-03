@@ -30,6 +30,7 @@ import { EntityDialogComponent } from './core/components/entity-dialog/entity-di
 import { CellStorageValueComponent } from './core/components/cell-storage-value/cell-storage-value.component';
 import { ImageDialogComponent } from './core/components/image-dialog/image-dialog.component';
 import { TopBarComponent } from './core/components/top-bar/top-bar.component';
+import { ServerErrorDialogComponent } from './core/components/server-error-dialog/server-error-dialog.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { TopBarComponent } from './core/components/top-bar/top-bar.component';
     CellStorageValueComponent,
     ImageDialogComponent,
     TopBarComponent,
+    ServerErrorDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,6 +59,7 @@ import { TopBarComponent } from './core/components/top-bar/top-bar.component';
     LoginDialogComponent,
     EntityDialogComponent,
     ImageDialogComponent,
+    ServerErrorDialogComponent,
   ],
   providers: [
     Wakanda,

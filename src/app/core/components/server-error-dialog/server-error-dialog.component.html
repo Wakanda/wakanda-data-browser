@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<mat-dialog-content>
+  An error occured while {{data.operation.description}}:
+  <pre>{{data.message}}</pre>
+  <div *ngIf="data.callToAction">
+    {{data.callToAction}}
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions *ngIf="!options.noActions">
+  <button class="close" mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

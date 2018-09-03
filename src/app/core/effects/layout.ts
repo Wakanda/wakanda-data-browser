@@ -12,8 +12,10 @@ import {
     ShowLogin,
     LoginSuccess,
     HideAddRow,
+    ServerError,
 } from '../actions/layout';
 import { EntityDialogComponent } from '../components/entity-dialog/entity-dialog.component';
+import { ServerErrorDialogComponent } from '../components/server-error-dialog/server-error-dialog.component';
 
 @Injectable()
 export class LayoutEffects {
@@ -56,6 +58,23 @@ export class LayoutEffects {
         ofType<HideAddRow>(LayoutActionTypes.HideAddRow),
         tap(() => {
             this.addRowDialogRef.close();
+        })
+    );
+
+    @Effect({ dispatch: false })
+    serverError$ = this.actions$.pipe(
+        ofType<ServerError>(LayoutActionTypes.ServerError),
+        tap(action => {
+            this.dialog.open(ServerErrorDialogComponent, {
+                data: {
+                    message: action.message,
+                    operation: action.operation,
+                    options: action.options,
+                    title: action.title,
+                    callToAction: action.callToAction
+                },
+                disableClose: true,
+            });
         })
     );
 

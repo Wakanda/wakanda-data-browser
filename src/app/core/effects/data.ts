@@ -29,6 +29,7 @@ import {
 } from '../actions/data';
 import * as layoutActions from '../actions/layout';
 import * as routerActions from '../actions/router';
+import { flattenServerErrors } from '../../shared/utils';
 
 const NOPE_OBSERVABLE = new Observable();
 
@@ -62,17 +63,29 @@ export class DataEffects {
                 return;
             }
 
-            return ds[tableName].query({
+            return from(ds[tableName].query({
                 filter: query,
                 pageSize: pageSize,
                 start: start
-            });
+            })).pipe(catchError(err => {
+                return of({ error: true, data: err });
+            }));
         }),
         map((response: any) => {
-            return new UpdateData({
-                entities: response.entities,
-                length: response._count
-            });
+            if (response.error) {
+                let parsedResponse = JSON.parse(response.data.response);
+                return new layoutActions.ServerError({
+                    message: flattenServerErrors(parsedResponse),
+                    operation: { description: 'querying the database' },
+                    title: 'Query error',
+                    callToAction: 'Check that the query is correct.'
+                });
+            } else {
+                return new UpdateData({
+                    entities: response.entities,
+                    length: response._count
+                });
+            }
         }),
     );
 
@@ -113,14 +126,26 @@ export class DataEffects {
     @Effect()
     removeRows$ = this.actions$.pipe(
         ofType<RemoveRows>(DataActionTypes.RemoveRows),
-        map(action => {
-            // TODO: handle failure
-            return Promise.all(action.rows.map(row => {
-                return row.delete();
+        switchMap(action => {
+            return from(
+                Promise.all(action.rows.map(row => {
+                    return row.delete();
+                }))
+            ).pipe(catchError(err => {
+                return of({ error: true, data: err });
             }));
         }),
-        map(result => {
-            return new FetchData();
+        map((response: any) => {
+            if (response.error) {
+                let parsedResponse = JSON.parse(response.data.response);
+                return new layoutActions.ServerError({
+                    message: flattenServerErrors(parsedResponse),
+                    operation: { description: 'removing entities' },
+                    title: 'Remove entities error'
+                });
+            } else {
+                return new FetchData();
+            }
         })
     );
 
@@ -219,15 +244,20 @@ export class DataEffects {
             return from(entity.save())
                 .pipe(
                     catchError(err => {
-                        return from([false]);
+                        return of({ error: true, data: err });
                     })
                 );
         }),
-        map(result => {
-            if (result !== false) {
-                return new AddRowSuccess();
+        map((response: any) => {
+            if (response.error) {
+                let parsedResponse = JSON.parse(response.data.response);
+                return new layoutActions.ServerError({
+                    message: flattenServerErrors(parsedResponse),
+                    operation: { description: 'creating entity' },
+                    title: 'Create entity error'
+                });
             } else {
-                return new AddRowFailure(); // TODO
+                return new AddRowSuccess();
             }
         })
     );

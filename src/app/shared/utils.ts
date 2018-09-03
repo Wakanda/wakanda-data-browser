@@ -37,3 +37,10 @@ export class CustomRouterStateSerializer
 export function isAuthError(err) {
   return err.statusCode === 401;
 }
+
+export function flattenServerErrors(obj) {
+  return obj.__ERROR
+    .map(err => '-' + err.message + '.')
+    .join('\n')
+    .trim();
+}
