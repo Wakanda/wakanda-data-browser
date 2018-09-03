@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { tap } from 'rxjs/operators';
-import { State } from '../../reducers';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { LoginDialogComponent } from '../components/login-dialog/login-dialog.component';
@@ -80,8 +78,6 @@ export class LayoutEffects {
 
     constructor(
         private actions$: Actions,
-        private store: Store<State>,
         private dialog: MatDialog,
-    ) {
-    }
+    ) { }
 }

@@ -40,7 +40,6 @@ export function isAuthError(err) {
 
 export function flattenServerErrors(obj) {
   return obj.__ERROR
-    .map(err => '-' + err.message + '.')
-    .join('\n')
-    .trim();
+    .map(err => '-' + err.message.trim() + '.')
+    .join('\n');
 }
