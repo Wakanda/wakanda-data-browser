@@ -37,4 +37,8 @@ export class CellStorageValueComponent implements OnInit {
     return (this.config.host + '/' + this.value.uri).replace(/([^:]\/)\/+/g, "$1");
   }
 
+  getBlobURL() {
+    return (this.config.host + '/' + this.value.uri).replace(/([^:]\/)\/+/g, "$1");
+  }
+
 }

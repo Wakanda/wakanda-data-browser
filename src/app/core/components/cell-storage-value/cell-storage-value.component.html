@@ -10,6 +10,13 @@
 <div *ngIf="column.type === 'object'">
   {{value | json}}
 </div>
+<div *ngIf="column.type === 'blob'">
+  <a [href]="getBlobURL()" *ngIf="value && value.uri">
+    <button mat-icon-button>
+      <mat-icon>link</mat-icon>
+    </button>
+  </a>
+</div>
 <div *ngIf="column.type === 'image' && value && value.uri">
   <img [src]="getImageURL()" (click)="previewImage()">
 </div>
