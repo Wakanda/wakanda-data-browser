@@ -2,9 +2,13 @@
     <app-cell-storage-value [column]="column" [value]="value">
     </app-cell-storage-value>
 </div>
-<div *ngIf="column.kind === 'relatedEntity'">
-    <a (click)="displayRelatedEntity()" class="link">show</a>
+<div *ngIf="column.kind === 'relatedEntity' && value">
+    <button (click)="displayRelatedEntity()" mat-icon-button>
+        <mat-icon>search</mat-icon>
+    </button>
 </div>
 <div *ngIf="column.kind === 'relatedEntities'">
-    <a (click)="displayRelatedEntities()" class="link">show</a>
+    <button (click)="displayRelatedEntities()" mat-icon-button>
+        <mat-icon>search</mat-icon>
+    </button>
 </div>
