@@ -10,8 +10,8 @@
 <div *ngIf="column.type === 'object'">
   {{value | json}}
 </div>
-<div *ngIf="column.type === 'blob'">
-  <a [href]="getBlobURL()" *ngIf="value && value.uri">
+<div *ngIf="column.type === 'blob' && value && value.uri">
+  <a [href]="getBlobURL()">
     <button mat-icon-button>
       <mat-icon>link</mat-icon>
     </button>
