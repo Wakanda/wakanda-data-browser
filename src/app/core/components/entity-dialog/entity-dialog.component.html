@@ -18,6 +18,13 @@
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
+    <div *ngIf="column.type === 'image' || column.type === 'blob'" [class.dragover]="column.__dragOver" class="attachment" (drop)="fileDropped($event, column)"
+      (dragover)="dragOverFileInput($event, column)" (dragleave)="dragLeaveFileInput(column)">
+      <button mat-icon-button class="attachment" color="primary" (click)="fileInput.click()">
+        <mat-icon>attachment</mat-icon>
+      </button> {{column.name}} <span *ngIf="column.__fileName">({{column.__fileName}})</span>
+      <input hidden type="file" #fileInput (change)="fileSelected($event, column)" />
+    </div>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>

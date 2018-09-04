@@ -243,6 +243,31 @@ export class DataEffects {
 
             return from(entity.save())
                 .pipe(
+                    switchMap(_entity => {
+                        /**
+                         * Since we can't upload images/blobs
+                         * before the entity is saved we do it afterwards.
+                         */
+                        let arr = Object.keys(action.values)
+                            .filter(key => {
+                                return action.values[key] instanceof File;
+                            })
+                            .map(key => {
+                                return switchMap(ent => {
+                                    return from(ent[key].upload(action.values[key]));
+                                });
+                            });
+
+                            /**
+                             * (1st upload)-[switchMap]->(2nd upload)->...
+                             * If we don't do this we'll have two options:
+                             * - use the same entity object => STAMP error
+                             * - fetch the entity after every upload and do
+                             *   unnecessary requests.
+                             */
+                        return of(_entity)
+                            .pipe(...arr);
+                    }),
                     catchError(err => {
                         return of({ error: true, data: err });
                     })

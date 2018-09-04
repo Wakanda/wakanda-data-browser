@@ -22,7 +22,6 @@ export interface DialogData {
 })
 export class EntityDialogComponent implements OnInit {
 
-  entity: Entity;
   columns$: Observable<Array<Column>>
   tableName$: Observable<string>;
   values: any = {};
@@ -86,6 +85,34 @@ export class EntityDialogComponent implements OnInit {
       'word',
       'byte'
     ].indexOf(column.type) > -1;
+  }
+
+  dragOverFileInput(event, column) {
+    event.preventDefault();
+    event.stopPropagation();
+    column.__dragOver = true;
+  }
+
+  dragLeaveFileInput(column) {
+    event.stopPropagation();
+    column.__dragOver = false;
+  }
+
+  fileDropped(event, column) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    let file = event.dataTransfer.files[0];
+    this.values[column.name] = file;
+    column.__fileName = file.name;
+
+    column.__dragOver = false;
+  }
+
+  fileSelected(event, column) {
+    let file = event.srcElement.files[0];
+    this.values[column.name] = file;
+    column.__fileName = file.name;
   }
 
 }
