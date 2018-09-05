@@ -21,6 +21,7 @@ export class LoginDialogComponent implements OnInit {
   userName: string;
   password: string;
   loginFailed$: Observable<boolean>
+  disableClose: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -28,6 +29,7 @@ export class LoginDialogComponent implements OnInit {
     private store: Store<fromRoot.State>
   ) {
     this.loginFailed$ = this.store.pipe(select(fromRoot.getLoginFailed));
+    this.disableClose = this.dialogRef.disableClose;
   }
 
   ngOnInit() {
@@ -37,5 +39,9 @@ export class LoginDialogComponent implements OnInit {
     this.store.dispatch(
       new data.Login(this.userName, this.password)
     );
+  }
+
+  close() {
+    this.dialogRef.close();
   }
 }

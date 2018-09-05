@@ -26,6 +26,8 @@ export class ToggleSidenav implements Action {
 
 export class ShowLogin implements Action {
     readonly type = LayoutActionTypes.ShowLogin;
+
+    constructor(public disableClose: boolean = true) { }
 }
 
 export class LoginSuccess implements Action {

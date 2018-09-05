@@ -24,10 +24,10 @@ export class LayoutEffects {
     @Effect({ dispatch: false })
     showLogin$ = this.actions$.pipe(
         ofType<ShowLogin>(LayoutActionTypes.ShowLogin),
-        tap(() => {
+        tap(action => {
             this.loginDialogRef = this.dialog.open(LoginDialogComponent, {
                 data: {},
-                disableClose: true
+                disableClose: action.disableClose
             });
         })
     );

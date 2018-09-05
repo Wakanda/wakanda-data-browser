@@ -51,4 +51,8 @@ export class TopBarComponent implements OnInit {
     this.store.dispatch(new data.Logout());
   }
 
+  showLogin() {
+    this.store.dispatch(new layout.ShowLogin(false));
+  }
+
 }

@@ -10,4 +10,5 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button class="login" mat-button (click)="login()">Login</button>
+  <button *ngIf="!disableClose" class="close" mat-button (click)="close()">Close</button>
 </mat-dialog-actions>
