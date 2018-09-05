@@ -98,14 +98,19 @@ export class EntityDialogComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
 
-    this.files[column.name] = this.files[column.name] || {};
-    this.files[column.name].dragOver = true;
+    this.files[column.name] = {
+      ...this.files[column.name],
+      dragOver: true
+    };
   }
 
   dragLeaveFileInput(column) {
     event.stopPropagation();
 
-    this.files[column.name].dragOver = false;
+    this.files[column.name] = {
+      ...this.files[column.name],
+      dragOver: false
+    };
   }
 
   fileDropped(event, column) {
@@ -115,16 +120,21 @@ export class EntityDialogComponent implements OnInit {
     let file = event.dataTransfer.files[0];
     this.values[column.name] = file;
 
-    this.files[column.name].dragOver = false;
-    this.files[column.name].fileName = file.name;
+    this.files[column.name] = {
+      ...this.files[column.name],
+      dragOver: false,
+      fileName: file.name
+    };
   }
 
   fileSelected(event, column) {
     let file = event.srcElement.files[0];
     this.values[column.name] = file;
 
-    this.files[column.name] = this.files[column.name] || {};
-    this.files[column.name].fileName = file.name;
+    this.files[column.name] = {
+      ...this.files[column.name],
+      fileName: file.name
+    };
   }
 
 }
