@@ -20,6 +20,7 @@ export enum DataActionTypes {
     UpdateTables = '[Data] Update Tables',
     FetchTables = '[Data] Fetch Tables',
     RemoveRows = '[Data] Remove Rows',
+    ConfirmRemoveRows = '[Data] Confirm Remove Rows',
     Login = '[Data] Login',
     LoginSuccess = '[Data] Login Success',
     LoginFailure = '[Data] Login Failure',
@@ -89,6 +90,12 @@ export class RemoveRows implements Action {
     constructor(public rows: Array<Entity>) { }
 }
 
+export class ConfirmRemoveRows implements Action {
+    readonly type = DataActionTypes.ConfirmRemoveRows;
+
+    constructor(public rows: Array<Entity>) { }
+}
+
 export class Login implements Action {
     readonly type = DataActionTypes.Login;
 
@@ -134,5 +141,5 @@ export class AddRowFailure implements Action {
 export type DataAction = Fetch | FetchData | FetchTables | FetchColumns | FetchUser
     | UpdateData | UpdateColumns | UpdateTables | UpdateUser
     | ChangeOptions
-    | RemoveRows | AddRow | AddRowSuccess | AddRowFailure
+    | RemoveRows | ConfirmRemoveRows | AddRow | AddRowSuccess | AddRowFailure
     | Login | LoginSuccess | LoginFailure | Logout;

@@ -18,14 +18,13 @@ import {
     UpdateUser,
     FetchTables,
     UpdateTables,
-    RemoveRows,
     Login,
     LoginSuccess,
     LoginFailure,
     Logout,
     AddRow,
     AddRowSuccess,
-    AddRowFailure,
+    ConfirmRemoveRows,
 } from '../actions/data';
 import * as layoutActions from '../actions/layout';
 import * as routerActions from '../actions/router';
@@ -124,8 +123,8 @@ export class DataEffects {
     );
 
     @Effect()
-    removeRows$ = this.actions$.pipe(
-        ofType<RemoveRows>(DataActionTypes.RemoveRows),
+    confirmRemoveRows$ = this.actions$.pipe(
+        ofType<ConfirmRemoveRows>(DataActionTypes.ConfirmRemoveRows),
         switchMap(action => {
             return from(
                 Promise.all(action.rows.map(row => {
@@ -258,13 +257,13 @@ export class DataEffects {
                                 });
                             });
 
-                            /**
-                             * (1st upload)-[switchMap]->(2nd upload)->...
-                             * If we don't do this we'll have two options:
-                             * - use the same entity object => STAMP error
-                             * - fetch the entity after every upload and do
-                             *   unnecessary requests.
-                             */
+                        /**
+                         * (1st upload)-[switchMap]->(2nd upload)->...
+                         * If we don't do this we'll have two options:
+                         * - use the same entity object => STAMP error
+                         * - fetch the entity after every upload and do
+                         *   unnecessary requests.
+                         */
                         return of(_entity)
                             .pipe(...arr);
                     }),

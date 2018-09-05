@@ -2,16 +2,16 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewEnca
 import { Observable } from 'rxjs';
 import { withLatestFrom, map } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
+import { MatTableDataSource } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
+import Entity from 'wakanda-client/dist/presentation/entity';
+
 import * as fromRoot from '../../../reducers';
 import * as data from '../../actions/data';
 import * as layout from '../../actions/layout';
 import * as router from '../../actions/router';
 
-import { MatTableDataSource } from '@angular/material';
-import { SelectionModel } from '@angular/cdk/collections';
-// import { query } from '@angular/animations';
 
-import Entity from 'wakanda-client/dist/presentation/entity';
 
 @Component({
   selector: 'app-data-table',
@@ -21,7 +21,7 @@ import Entity from 'wakanda-client/dist/presentation/entity';
   encapsulation: ViewEncapsulation.None
 })
 export class DataTableComponent implements OnInit {
-  
+
   data$: Observable<MatTableDataSource<Entity>>;
   dataSource: MatTableDataSource<Entity>;
   columns$;
@@ -34,7 +34,7 @@ export class DataTableComponent implements OnInit {
   selection: SelectionModel<Entity> = new SelectionModel<Entity>(true, []);
 
   constructor(private store: Store<fromRoot.State>, private cd: ChangeDetectorRef) {
-    
+
     this.pageSize$ = this.store.pipe(select(fromRoot.getPageSize));
     this.length$ = this.store.pipe(select(fromRoot.getLength));
     this.columns$ = this.store.pipe(select(fromRoot.getColumns));
@@ -86,7 +86,9 @@ export class DataTableComponent implements OnInit {
   }
 
   removeSelectedRows() {
-    this.store.dispatch(new data.RemoveRows(this.selection.selected));
+    if (this.selection.selected.length) {
+      this.store.dispatch(new data.RemoveRows(this.selection.selected));
+    }
   }
 
   addEntity() {

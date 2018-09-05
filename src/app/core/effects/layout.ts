@@ -12,8 +12,12 @@ import {
     HideAddRow,
     ServerError,
 } from '../actions/layout';
+
+import * as data from '../actions/data';
+
 import { EntityDialogComponent } from '../components/entity-dialog/entity-dialog.component';
 import { ServerErrorDialogComponent } from '../components/server-error-dialog/server-error-dialog.component';
+import { ConfirmRemoveRowsDialogComponent } from '../components/confirm-remove-rows-dialog/confirm-remove-rows-dialog.component';
 
 @Injectable()
 export class LayoutEffects {
@@ -70,6 +74,19 @@ export class LayoutEffects {
                     options: action.options,
                     title: action.title,
                     callToAction: action.callToAction
+                },
+                disableClose: true,
+            });
+        })
+    );
+
+    @Effect({ dispatch: false })
+    removeRows$ = this.actions$.pipe(
+        ofType<data.RemoveRows>(data.DataActionTypes.RemoveRows),
+        tap(action => {
+            this.dialog.open(ConfirmRemoveRowsDialogComponent, {
+                data: {
+                    rows: action.rows
                 },
                 disableClose: true,
             });
