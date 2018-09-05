@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Sign in</h1>
+<h1 mat-dialog-title>Authentication</h1>
 <mat-dialog-content>
   <mat-form-field class="form-input" [class.warn]="loginFailed$ | async">
     <input matInput placeholder="User name" [(ngModel)]="userName" (keydown.enter)="login()" cdkFocusInitial/>
@@ -6,9 +6,9 @@
   <mat-form-field class="form-input" [class.warn]="loginFailed$ | async">
     <input matInput placeholder="Password" type="password" [(ngModel)]="password" (keydown.enter)="login()" />
   </mat-form-field>
-  <mat-error *ngIf="loginFailed$ | async">Login failed</mat-error>
+  <mat-error *ngIf="loginFailed$ | async">Authentication failed.</mat-error>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button class="login" mat-button (click)="login()">Login</button>
+  <button class="login" mat-button (click)="login()">Log In</button>
   <button *ngIf="!disableClose" class="close" mat-button (click)="close()">Close</button>
 </mat-dialog-actions>

@@ -15,6 +15,6 @@
 <button mat-button matSuffix mat-icon-button aria-label="logout" (click)="logout()" class="right-button" *ngIf="loggedIn$ | async">
   <mat-icon title="Logout">exit_to_app</mat-icon>
 </button>
-<button mat-button aria-label="login" (click)="showLogin()" class="right-button" *ngIf="!(loggedIn$ | async)">
-  Login
+<button mat-button aria-label="Log In" (click)="showLogin()" class="right-button" *ngIf="!(loggedIn$ | async)">
+  Log In
 </button>
