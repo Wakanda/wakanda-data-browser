@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Add new {{tableName$ | async}} entity</h1>
+<h1 mat-dialog-title>Add new {{tableName$ | async}}</h1>
 <mat-dialog-content>
   <div *ngFor="let column of columns$ | async">
     <mat-checkbox *ngIf="column.type === 'bool'" [(ngModel)]="values[column.name]"> {{column.name}}</mat-checkbox>

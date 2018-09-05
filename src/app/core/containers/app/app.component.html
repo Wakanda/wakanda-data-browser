@@ -5,7 +5,7 @@
         <button mat-button matSuffix mat-icon-button aria-label="Hide" (click)="toggleSideNav()" *ngIf="showSidenav$ | async" class="menu-toggle">
           <mat-icon title="Hide">menu</mat-icon>
         </button>
-        <span>Dataclasses</span>
+        <span>Tables</span>
       </div>
       <mat-list-item *ngFor="let table of tables$ | async" (click)="switchTable(table)" class="table" [ngClass]="{'selected' : table === (tableName$|async)}">
         {{table}} </mat-list-item>
