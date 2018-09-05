@@ -25,6 +25,7 @@ export class EntityDialogComponent implements OnInit {
   columns$: Observable<Array<Column>>
   tableName$: Observable<string>;
   values: any = {};
+  files: any = {};
   columns: Array<any>;
 
   constructor(
@@ -42,6 +43,12 @@ export class EntityDialogComponent implements OnInit {
             ColumnKinds.calculated
           ].indexOf(column.kind) === -1;
         });
+
+        this.columns
+          .filter(column => column.type === 'image' || column.type === 'blob')
+          .forEach(column => {
+            this.files[column.name] = {};
+          });
 
         return this.columns;
       })
@@ -90,12 +97,15 @@ export class EntityDialogComponent implements OnInit {
   dragOverFileInput(event, column) {
     event.preventDefault();
     event.stopPropagation();
-    column.__dragOver = true;
+
+    this.files[column.name] = this.files[column.name] || {};
+    this.files[column.name].dragOver = true;
   }
 
   dragLeaveFileInput(column) {
     event.stopPropagation();
-    column.__dragOver = false;
+
+    this.files[column.name].dragOver = false;
   }
 
   fileDropped(event, column) {
@@ -104,15 +114,17 @@ export class EntityDialogComponent implements OnInit {
 
     let file = event.dataTransfer.files[0];
     this.values[column.name] = file;
-    column.__fileName = file.name;
 
-    column.__dragOver = false;
+    this.files[column.name].dragOver = false;
+    this.files[column.name].fileName = file.name;
   }
 
   fileSelected(event, column) {
     let file = event.srcElement.files[0];
     this.values[column.name] = file;
-    column.__fileName = file.name;
+
+    this.files[column.name] = this.files[column.name] || {};
+    this.files[column.name].fileName = file.name;
   }
 
 }
