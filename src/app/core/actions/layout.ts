@@ -5,6 +5,7 @@ export enum LayoutActionTypes {
     CloseSidenav = '[Layout] Close Sidenav',
     ToggleSidenav = '[Layout] Toggle Sidenav',
     ShowLogin = '[Layout] Show Login',
+    ShowImage = '[Layout] Show Image',
     LoginSuccess = '[Layout] Login Success',
     LoginFailure = '[Layout] Login Failure',
     ShowAddRow = '[Layout] Show Add Row',
@@ -28,6 +29,12 @@ export class ShowLogin implements Action {
     readonly type = LayoutActionTypes.ShowLogin;
 
     constructor(public disableClose: boolean = true) { }
+}
+
+export class ShowImage implements Action {
+    readonly type = LayoutActionTypes.ShowImage;
+
+    constructor(public url: string) { }
 }
 
 export class LoginSuccess implements Action {
@@ -82,4 +89,5 @@ export class ServerError implements Action {
 export type LayoutAction = OpenSidenav | CloseSidenav | ToggleSidenav
     | ShowLogin | LoginSuccess | LoginFailure
     | ShowAddRow | HideAddRow
+    | ShowImage
     | ServerError;

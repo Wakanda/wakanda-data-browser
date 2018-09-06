@@ -8,6 +8,7 @@ import {
     LayoutActionTypes,
     ShowAddRow,
     ShowLogin,
+    ShowImage,
     LoginSuccess,
     HideAddRow,
     ServerError,
@@ -18,6 +19,7 @@ import * as data from '../actions/data';
 import { EntityDialogComponent } from '../components/entity-dialog/entity-dialog.component';
 import { ServerErrorDialogComponent } from '../components/server-error-dialog/server-error-dialog.component';
 import { ConfirmRemoveRowsDialogComponent } from '../components/confirm-remove-rows-dialog/confirm-remove-rows-dialog.component';
+import { ImageDialogComponent } from '../components/image-dialog/image-dialog.component';
 
 @Injectable()
 export class LayoutEffects {
@@ -49,8 +51,7 @@ export class LayoutEffects {
         ofType<ShowAddRow>(LayoutActionTypes.ShowAddRow),
         tap(() => {
             this.addRowDialogRef = this.dialog.open(EntityDialogComponent, {
-                data: {},
-                disableClose: true
+                data: {}
             });
         })
     );
@@ -74,8 +75,7 @@ export class LayoutEffects {
                     options: action.options,
                     title: action.title,
                     callToAction: action.callToAction
-                },
-                disableClose: true,
+                }
             });
         })
     );
@@ -87,8 +87,21 @@ export class LayoutEffects {
             this.dialog.open(ConfirmRemoveRowsDialogComponent, {
                 data: {
                     rows: action.rows
-                },
+                }
+            });
+        })
+    );
+
+    @Effect({ dispatch: false })
+    showImage$ = this.actions$.pipe(
+        ofType<ShowImage>(LayoutActionTypes.ShowImage),
+        tap(action => {
+            this.dialog.open(ImageDialogComponent, {
                 disableClose: true,
+                id: 'image-dialog',
+                data: {
+                    url: action.url,
+                }
             });
         })
     );

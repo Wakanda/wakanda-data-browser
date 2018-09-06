@@ -2,11 +2,15 @@ import { Component, OnInit, Input } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { Config } from '../../../config';
+import { Store } from '@ngrx/store';
+import { State } from '../../../reducers';
+
+import * as layout from '../../actions/layout';
 
 @Component({
   selector: 'app-cell-storage-value',
   templateUrl: './cell-storage-value.component.html',
-  styleUrls: ['./cell-storage-value.component.css']  
+  styleUrls: ['./cell-storage-value.component.css']
 })
 export class CellStorageValueComponent implements OnInit {
 
@@ -15,7 +19,11 @@ export class CellStorageValueComponent implements OnInit {
 
   imageDiagRef: MatDialogRef<ImageDialogComponent>;
 
-  constructor(private dialog: MatDialog, private config: Config) { }
+  constructor(
+    private dialog: MatDialog,
+    private config: Config,
+    private store: Store<State>
+  ) { }
 
   ngOnInit() { }
 
@@ -24,13 +32,7 @@ export class CellStorageValueComponent implements OnInit {
   }
 
   previewImage() {
-    this.imageDiagRef = this.dialog.open(ImageDialogComponent, {
-      disableClose: true,
-      id: 'image-dialog',
-      data: {
-        uri: this.getImageURL(),
-      }
-    });
+    this.store.dispatch(new layout.ShowImage(this.getImageURL()));
   }
 
   getImageURL() {

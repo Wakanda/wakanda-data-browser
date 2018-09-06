@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 export interface DialogData {
-  uri: string;
+  url: string;
 };
 
 @Component({
