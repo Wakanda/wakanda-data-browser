@@ -33,6 +33,10 @@ export const getLoginFailed = createSelector(
     getLayoutState,
     fromLayout.getLoginFailed
 );
+export const getRouting = createSelector(
+    getLayoutState,
+    fromLayout.getRouting
+);
 export const getQuery = createSelector(
     getDataState,
     fromData.getQuery
@@ -68,4 +72,8 @@ export const getTables = createSelector(
 export const getUser = createSelector(
     getDataState,
     fromData.getUser
+);
+export const getRowSaveInProgress = createSelector(
+    getDataState,
+    fromData.getRowSaveInProgress
 );

@@ -1,9 +1,8 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import Entity from 'wakanda-client/dist/presentation/entity';
 
 import { ColumnKinds } from '../../models/data';
 import { Column } from '../../reducers/data';
@@ -18,12 +17,14 @@ export interface DialogData {
 @Component({
   selector: 'app-entity-dialog',
   templateUrl: './entity-dialog.component.html',
-  styleUrls: ['./entity-dialog.component.css']
+  styleUrls: ['./entity-dialog.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class EntityDialogComponent implements OnInit {
 
   columns$: Observable<Array<Column>>
   tableName$: Observable<string>;
+  saveInProgress$: Observable<boolean>;
   values: any = {};
   files: any = {};
   columns: Array<any>;
@@ -34,6 +35,8 @@ export class EntityDialogComponent implements OnInit {
     private store: Store<fromRoot.State>
   ) {
     this.tableName$ = this.store.pipe(select(fromRoot.getTableName));
+    this.saveInProgress$ = this.store.pipe(select(fromRoot.getRowSaveInProgress));
+    
     this.columns$ = this.store.pipe(
       select(fromRoot.getColumns),
       map(_columns => {

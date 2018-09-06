@@ -15,3 +15,9 @@ div.dragover {
     border-color: black;
     border-style: dashed;
 }
+
+button.save {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}

@@ -24,6 +24,7 @@ import {
     Logout,
     AddRow,
     AddRowSuccess,
+    AddRowFailure,
     ConfirmRemoveRows,
 } from '../actions/data';
 import * as layoutActions from '../actions/layout';
@@ -230,7 +231,7 @@ export class DataEffects {
         tap(() => {
             window.location.reload();
         })
-    )
+    );
 
     @Effect()
     addRow$ = this.actions$.pipe(
@@ -264,8 +265,8 @@ export class DataEffects {
                          * - fetch the entity after every upload and do
                          *   unnecessary requests.
                          */
-                        return of(_entity)
-                            .pipe(...arr);
+                        //@ts-ignore
+                        return of(_entity).pipe(...arr);
                     }),
                     catchError(err => {
                         return of({ error: true, data: err });
@@ -275,11 +276,14 @@ export class DataEffects {
         map((response: any) => {
             if (response.error) {
                 let parsedResponse = JSON.parse(response.data.response);
-                return new layoutActions.ServerError({
+
+                this.store$.dispatch(new layoutActions.ServerError({
                     message: flattenServerErrors(parsedResponse),
                     operation: { description: 'creating entity' },
                     title: 'Create entity error'
-                });
+                }));
+
+                return new AddRowFailure();
             } else {
                 return new AddRowSuccess();
             }

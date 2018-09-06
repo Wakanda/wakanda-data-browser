@@ -19,7 +19,8 @@ export interface State {
     rows: Array<any>;
     columns: Array<Column>;
     tables: Array<string>;
-    user: { [key: string]: any }
+    user: { [key: string]: any };
+    rowSaveInprogress: boolean;
 }
 
 const initialState: State = {
@@ -31,7 +32,8 @@ const initialState: State = {
     rows: [],
     columns: [],
     tables: [],
-    user: null
+    user: null,
+    rowSaveInprogress: false,
 };
 
 export function reducer(
@@ -81,6 +83,19 @@ export function reducer(
                 user: action.payload
             };
 
+        case DataActionTypes.AddRow:
+            return {
+                ...state,
+                rowSaveInprogress: true,
+            }
+
+        case DataActionTypes.AddRowSuccess:
+        case DataActionTypes.AddRowFailure:
+            return {
+                ...state,
+                rowSaveInprogress: false,
+            }
+
         default:
             return state;
     }
@@ -95,3 +110,4 @@ export const getColumns = (state: State) => state.columns;
 export const getStart = (state: State) => state.start;
 export const getTables = (state: State) => state.tables;
 export const getUser = (state: State) => state.user;
+export const getRowSaveInProgress = (state: State) => state.rowSaveInprogress;
