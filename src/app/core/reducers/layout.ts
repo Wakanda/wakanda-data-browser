@@ -47,6 +47,12 @@ export function reducer(
                 loginFailed: true,
             };
 
+        case LayoutActionTypes.HideLogin:
+            return {
+                ...state,
+                loginFailed: false,
+            };
+
         case LayoutActionTypes.Loading:
             return {
                 ...state,
