@@ -97,7 +97,6 @@ export class LayoutEffects {
         ofType<ShowImage>(LayoutActionTypes.ShowImage),
         tap(action => {
             this.dialog.open(ImageDialogComponent, {
-                disableClose: true,
                 id: 'image-dialog',
                 data: {
                     url: action.url,
