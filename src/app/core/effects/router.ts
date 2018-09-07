@@ -2,9 +2,15 @@ import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { from, of } from 'rxjs';
-import { map, withLatestFrom, catchError, switchMap } from 'rxjs/operators';
+import { map, withLatestFrom, catchError, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { ROUTER_NAVIGATION } from '@ngrx/router-store';
+import {
+    // ROUTER_REQUEST,
+    ROUTER_NAVIGATION,
+    // ROUTER_NAVIGATED,
+    // ROUTER_CANCEL,
+    // ROUTER_ERROR,
+} from '@ngrx/router-store';
 
 import { State } from '../../reducers';
 import {
@@ -14,7 +20,6 @@ import {
     UpdateQuery,
     RouterActionTypes,
     Initialize,
-    RouterAction
 } from '../actions/router';
 
 import * as dataActions from '../actions/data';
@@ -23,11 +28,28 @@ import { Wakanda } from '../../wakanda';
 
 @Injectable()
 export class RouterEffects {
+
+    // @Effect()
+    // request$ = this.actions$.pipe(
+    //     ofType(ROUTER_REQUEST),
+    //     map(() => {
+    //         return new layoutActions.Loading(true);
+    //     })
+    // );
+
+    // @Effect()
+    // navigated$ = this.actions$.pipe(
+    //     ofType(ROUTER_NAVIGATED, ROUTER_CANCEL, ROUTER_ERROR),
+    //     map(() => {
+    //         return new layoutActions.Loading(false);
+    //     })
+    // );
+
     @Effect({ dispatch: false })
     navigate$ = this.actions$.pipe(
         ofType<Go>(RouterActionTypes.Go),
         map((action: Go) => action.payload),
-        map(({ path, query: queryParams, extras }) => {
+        tap(({ path, query: queryParams, extras }) => {
             this.router.navigate(path, { queryParams, ...extras })
         })
     );

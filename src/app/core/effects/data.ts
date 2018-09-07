@@ -37,6 +37,8 @@ const NOPE_OBSERVABLE = new Observable();
 export class DataEffects {
 
     getCatalogOrLogin() {
+        this.store$.dispatch(new layoutActions.Loading(true));
+
         return from(this.wakanda.getCatalog())
             .pipe(catchError(error => {
                 if (isAuthError(error)) {
@@ -50,7 +52,7 @@ export class DataEffects {
     @Effect()
     fetchData$ = this.actions$.pipe(
         ofType<FetchData>(DataActionTypes.FetchData),
-        switchMap(() => this.getCatalogOrLogin()),
+        switchMap(() => this.getCatalogOrLogin()), // loading = true
         withLatestFrom(this.store$),
         switchMap(([ds, state]: [any, State]) => {
             let query = state.data.query;
@@ -72,6 +74,8 @@ export class DataEffects {
             }));
         }),
         map((response: any) => {
+            this.store$.dispatch(new layoutActions.Loading(false));
+
             if (response.error) {
                 let parsedResponse = JSON.parse(response.data.response);
                 return new layoutActions.ServerError({
@@ -92,13 +96,13 @@ export class DataEffects {
     @Effect()
     fetchTables = this.actions$.pipe(
         ofType<FetchTables>(DataActionTypes.FetchTables),
-        switchMap(() => this.getCatalogOrLogin()),
+        switchMap(() => this.getCatalogOrLogin()), // loading = true
         switchMap(catalog => {
             let tables = Object.keys(catalog);
 
             return [
                 new UpdateTables(tables),
-                new FetchColumns(),
+                new FetchColumns(), // loading = false
             ];
         })
     );
@@ -106,7 +110,7 @@ export class DataEffects {
     @Effect()
     fetchColumns$ = this.actions$.pipe(
         ofType<FetchColumns>(DataActionTypes.FetchColumns),
-        switchMap(() => this.getCatalogOrLogin()),
+        switchMap(() => this.getCatalogOrLogin()), // loading = true
         withLatestFrom(this.store$),
         switchMap(([ds, state]: [any, State]) => {
             let tableName = state.data.tableName;
@@ -118,7 +122,7 @@ export class DataEffects {
             let columns = ds[tableName].attributes;
             return [
                 new UpdateColumns(columns),
-                new FetchData(),
+                new FetchData(), // loading = false
             ];
         })
     );
@@ -127,6 +131,8 @@ export class DataEffects {
     confirmRemoveRows$ = this.actions$.pipe(
         ofType<ConfirmRemoveRows>(DataActionTypes.ConfirmRemoveRows),
         switchMap(action => {
+            this.store$.dispatch(new layoutActions.Loading(true));
+
             return from(
                 Promise.all(action.rows.map(row => {
                     return row.delete();
@@ -137,6 +143,8 @@ export class DataEffects {
         }),
         map((response: any) => {
             if (response.error) {
+                this.store$.dispatch(new layoutActions.Loading(false));
+
                 let parsedResponse = JSON.parse(response.data.response);
                 return new layoutActions.ServerError({
                     message: flattenServerErrors(parsedResponse),
@@ -144,7 +152,7 @@ export class DataEffects {
                     title: 'Remove entities error'
                 });
             } else {
-                return new FetchData();
+                return new FetchData();  // loading = false
             }
         })
     );
@@ -177,8 +185,9 @@ export class DataEffects {
         ofType<Fetch>(DataActionTypes.Fetch),
         switchMap(() => {
             return [
+                new layoutActions.Loading(true),
                 new FetchUser(),
-                new FetchTables,
+                new FetchTables, // loading = false
             ];
         })
     );
@@ -236,7 +245,7 @@ export class DataEffects {
     @Effect()
     addRow$ = this.actions$.pipe(
         ofType<AddRow>(DataActionTypes.AddRow),
-        withLatestFrom(this.store$, this.wakanda.getCatalog()),
+        withLatestFrom(this.store$, this.wakanda.getCatalog()), // loading = true
         switchMap(([action, store, ds]) => {
             let tableName = store.data.tableName;
             let entity = ds[tableName].create(action.values);
@@ -275,6 +284,8 @@ export class DataEffects {
         }),
         map((response: any) => {
             if (response.error) {
+                this.store$.dispatch(new layoutActions.Loading(false));
+
                 let parsedResponse = JSON.parse(response.data.response);
 
                 this.store$.dispatch(new layoutActions.ServerError({
@@ -285,7 +296,7 @@ export class DataEffects {
 
                 return new AddRowFailure();
             } else {
-                return new AddRowSuccess();
+                return new AddRowSuccess(); // loading = false
             }
         })
     );
@@ -294,7 +305,7 @@ export class DataEffects {
     addRowSuccess$ = this.actions$.pipe(
         ofType<AddRowSuccess>(DataActionTypes.AddRowSuccess),
         switchMap(() => [
-            new FetchData(),
+            new FetchData(), // loading = false
             new layoutActions.HideAddRow(),
         ])
     );

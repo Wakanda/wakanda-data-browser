@@ -34,3 +34,11 @@ mat-list-item.selected {
     flex-grow: 1;
     flex-basis: auto;
 }
+
+mat-progress-bar {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top:0px;
+    z-index: 1000;
+}

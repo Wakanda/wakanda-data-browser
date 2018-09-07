@@ -20,6 +20,7 @@ export class AppComponent {
   showSidenav$: Observable<boolean>;
   tables$: Observable<Array<string>>;
   tableName$: Observable<string>;
+  loading$: Observable<boolean>;
 
   loginDialogRef: MatDialogRef<LoginDialogComponent>;
 
@@ -27,6 +28,7 @@ export class AppComponent {
     this.showSidenav$ = this.store.pipe(select(fromRoot.getShowSidenav));
     this.tables$ = this.store.pipe(select(fromRoot.getTables));
     this.tableName$ = this.store.pipe(select(fromRoot.getTableName));
+    this.loading$ = this.store.pipe(select(fromRoot.getLoading));
   }
 
   switchTable(tableName) {

@@ -33,9 +33,9 @@ export const getLoginFailed = createSelector(
     getLayoutState,
     fromLayout.getLoginFailed
 );
-export const getRouting = createSelector(
+export const getLoading = createSelector(
     getLayoutState,
-    fromLayout.getRouting
+    fromLayout.getLoading
 );
 export const getQuery = createSelector(
     getDataState,

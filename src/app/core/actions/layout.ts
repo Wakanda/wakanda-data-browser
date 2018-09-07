@@ -11,6 +11,7 @@ export enum LayoutActionTypes {
     ShowAddRow = '[Layout] Show Add Row',
     HideAddRow = '[Layout] Hide Add Row',
     ServerError = '[Layout] Server Error',
+    Loading = '[Layout] Loading',
 }
 
 export class OpenSidenav implements Action {
@@ -53,6 +54,12 @@ export class HideAddRow implements Action {
     readonly type = LayoutActionTypes.HideAddRow;
 }
 
+export class Loading implements Action {
+    readonly type = LayoutActionTypes.Loading;
+
+    constructor(public loading: boolean) { }
+}
+
 interface ServerErr {
     title?: string,
     message: string,
@@ -90,4 +97,5 @@ export type LayoutAction = OpenSidenav | CloseSidenav | ToggleSidenav
     | ShowLogin | LoginSuccess | LoginFailure
     | ShowAddRow | HideAddRow
     | ShowImage
-    | ServerError;
+    | ServerError
+    | Loading;
