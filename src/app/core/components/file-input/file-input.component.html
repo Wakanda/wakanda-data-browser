@@ -1,0 +1,7 @@
+<div [class.dragover]="dragOver" class="attachment" (drop)="fileDropped($event)" (dragover)="dragOverFileInput($event)"
+  (dragleave)="dragLeaveFileInput()">
+  <button mat-icon-button class="attachment" color="primary" (click)="fileInput.click()">
+    <mat-icon>attachment</mat-icon>
+  </button> {{title}} <span *ngIf="file">({{file.name}})</span>
+  <input hidden type="file" #fileInput (change)="fileSelected($event)" />
+</div>

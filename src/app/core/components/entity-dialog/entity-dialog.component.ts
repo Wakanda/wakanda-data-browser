@@ -36,7 +36,7 @@ export class EntityDialogComponent implements OnInit {
   ) {
     this.tableName$ = this.store.pipe(select(fromRoot.getTableName));
     this.saveInProgress$ = this.store.pipe(select(fromRoot.getRowSaveInProgress));
-    
+
     this.columns$ = this.store.pipe(
       select(fromRoot.getColumns),
       map(_columns => {
@@ -97,47 +97,8 @@ export class EntityDialogComponent implements OnInit {
     ].indexOf(column.type) > -1;
   }
 
-  dragOverFileInput(event, column) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    this.files[column.name] = {
-      ...this.files[column.name],
-      dragOver: true
-    };
-  }
-
-  dragLeaveFileInput(column) {
-    event.stopPropagation();
-
-    this.files[column.name] = {
-      ...this.files[column.name],
-      dragOver: false
-    };
-  }
-
-  fileDropped(event, column) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    let file = event.dataTransfer.files[0];
+  onFileSelected(file, column) {
     this.values[column.name] = file;
-
-    this.files[column.name] = {
-      ...this.files[column.name],
-      dragOver: false,
-      fileName: file.name
-    };
-  }
-
-  fileSelected(event, column) {
-    let file = event.srcElement.files[0];
-    this.values[column.name] = file;
-
-    this.files[column.name] = {
-      ...this.files[column.name],
-      fileName: file.name
-    };
   }
 
 }

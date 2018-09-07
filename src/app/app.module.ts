@@ -31,6 +31,7 @@ import { CellStorageValueComponent } from './core/components/cell-storage-value/
 import { ImageDialogComponent } from './core/components/image-dialog/image-dialog.component';
 import { TopBarComponent } from './core/components/top-bar/top-bar.component';
 import { ServerErrorDialogComponent } from './core/components/server-error-dialog/server-error-dialog.component';
+import { FileInputComponent } from './core/components/file-input/file-input.component';
 import { ConfirmRemoveRowsDialogComponent } from './core/components/confirm-remove-rows-dialog/confirm-remove-rows-dialog.component';
 
 @NgModule({
@@ -44,6 +45,7 @@ import { ConfirmRemoveRowsDialogComponent } from './core/components/confirm-remo
     ImageDialogComponent,
     TopBarComponent,
     ServerErrorDialogComponent,
+    FileInputComponent,
     ConfirmRemoveRowsDialogComponent,
   ],
   imports: [
