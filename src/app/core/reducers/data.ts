@@ -21,6 +21,8 @@ export interface State {
     tables: Array<string>;
     user: { [key: string]: any };
     rowSaveInprogress: boolean;
+    sortBy: string;
+    sortDirection: string;
 }
 
 const initialState: State = {
@@ -34,6 +36,8 @@ const initialState: State = {
     tables: [],
     user: null,
     rowSaveInprogress: false,
+    sortBy: "",
+    sortDirection: "",
 };
 
 export function reducer(
@@ -49,13 +53,17 @@ export function reducer(
             let start = payload.pageIndex !== undefined ? payload.pageIndex * pageSize : state.start;
             let query = payload.query !== undefined ? payload.query : state.query;
             let tableName = payload.tableName !== undefined ? payload.tableName : state.tableName;
+            let sortBy = payload.sortBy !== undefined ? payload.sortBy : state.sortBy;
+            let sortDirection = payload.sortDirection !== undefined ? payload.sortDirection : state.sortDirection;
 
             return {
                 ...state,
                 pageSize,
                 start,
                 query,
-                tableName
+                tableName,
+                sortBy,
+                sortDirection
             };
 
         case DataActionTypes.UpdateData:
@@ -111,3 +119,5 @@ export const getStart = (state: State) => state.start;
 export const getTables = (state: State) => state.tables;
 export const getUser = (state: State) => state.user;
 export const getRowSaveInProgress = (state: State) => state.rowSaveInprogress;
+export const getSortBy = (state: State) => state.sortBy;
+export const getSortDirection = (state: State) => state.sortDirection;

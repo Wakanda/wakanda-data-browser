@@ -1,8 +1,8 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { withLatestFrom, map } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatSort, Sort } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import Entity from 'wakanda-client/dist/presentation/entity';
 
@@ -22,6 +22,8 @@ import * as router from '../../actions/router';
 })
 export class DataTableComponent implements OnInit {
 
+  @ViewChild(MatSort) sort: MatSort;
+
   data$: Observable<MatTableDataSource<Entity>>;
   dataSource: MatTableDataSource<Entity>;
   columns$;
@@ -29,6 +31,8 @@ export class DataTableComponent implements OnInit {
   pageIndex$: Observable<number>;
   pageSize$: Observable<number>;
   length$: Observable<number>;
+  sortBy$: Observable<string>;
+  sortDirection$: Observable<string>;
 
   pageSizeOptions = [20, 40, 80, 100];
   selection: SelectionModel<Entity> = new SelectionModel<Entity>(true, []);
@@ -63,13 +67,19 @@ export class DataTableComponent implements OnInit {
         return this.dataSource;
       })
     );
+
+    this.sortBy$ = this.store.pipe(select(fromRoot.getSortBy));
+    this.sortDirection$ = this.store.pipe(select(fromRoot.getSortDirection));
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   handlePageEvent(event) {
     this.store.dispatch(new router.UpdatePageOptions(event));
+  }
+
+  handleSortChange(sort: Sort) {
+    this.store.dispatch(new router.UpdateOrder(sort.active, sort.direction));
   }
 
   isAllSelected() {

@@ -34,10 +34,20 @@ export class FetchData implements Action {
     readonly type = DataActionTypes.FetchData;
 }
 
+interface FetchOptions {
+    pageIndex?: number;
+    pageSize?: number;
+    length?: number;
+    tableName?: string;
+    query?: string;
+    sortBy?: string;
+    sortDirection?: string;
+}
+
 export class ChangeOptions implements Action {
     readonly type = DataActionTypes.ChangeOptions;
 
-    constructor(public payload: { pageIndex?: number, pageSize?: number, length?: number, tableName?: string, query?: string }) { }
+    constructor(public payload: FetchOptions) { }
 }
 
 export class UpdateData implements Action {
@@ -54,14 +64,10 @@ export class UpdateUser implements Action {
 
 export class Fetch implements Action {
     readonly type = DataActionTypes.Fetch;
-
-    constructor() { }
 }
 
 export class FetchUser implements Action {
     readonly type = DataActionTypes.FetchUser;
-
-    constructor() { }
 }
 
 export class FetchColumns implements Action {
@@ -104,20 +110,14 @@ export class Login implements Action {
 
 export class LoginSuccess implements Action {
     readonly type = DataActionTypes.LoginSuccess;
-
-    constructor() { }
 }
 
 export class LoginFailure implements Action {
     readonly type = DataActionTypes.LoginFailure;
-
-    constructor() { }
 }
 
 export class Logout implements Action {
     readonly type = DataActionTypes.Logout;
-
-    constructor() { }
 }
 
 export class AddRow implements Action {
@@ -128,14 +128,10 @@ export class AddRow implements Action {
 
 export class AddRowSuccess implements Action {
     readonly type = DataActionTypes.AddRowSuccess;
-
-    constructor() { }
 }
 
 export class AddRowFailure implements Action {
     readonly type = DataActionTypes.AddRowFailure;
-
-    constructor() { }
 }
 
 export type DataAction = Fetch | FetchData | FetchTables | FetchColumns | FetchUser

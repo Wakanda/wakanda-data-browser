@@ -49,6 +49,14 @@ export const getLength = createSelector(
     getDataState,
     fromData.getLength
 );
+export const getSortBy = createSelector(
+    getDataState,
+    fromData.getSortBy
+);
+export const getSortDirection = createSelector(
+    getDataState,
+    fromData.getSortDirection
+);
 export const getRows = createSelector(
     getDataState,
     fromData.getRows

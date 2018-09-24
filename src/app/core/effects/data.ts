@@ -59,9 +59,19 @@ export class DataEffects {
         withLatestFrom(this.store$),
         switchMap(([ds, state]: [any, State]) => {
             let query = state.data.query;
+            let sortBy = state.data.sortBy;
+            let sortDirection = state.data.sortDirection;
             let tableName = state.data.tableName;
             let pageSize = state.data.pageSize;
             let start = state.data.start;
+            let orderBy = undefined;
+
+            if (sortBy) {
+                orderBy = sortBy;
+                if (sortDirection) {
+                    orderBy += ` ${sortDirection}`;
+                }
+            }
 
             if (!tableName) {
                 debugger;
@@ -70,8 +80,9 @@ export class DataEffects {
 
             return from(ds[tableName].query({
                 filter: query,
-                pageSize: pageSize,
-                start: start
+                pageSize,
+                start,
+                orderBy,
             })).pipe(catchError(err => {
                 return of({ error: true, data: err });
             }));

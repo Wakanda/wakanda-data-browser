@@ -8,7 +8,8 @@ export const enum RouterActionTypes {
   SwitchTable = '[Router] Switch Table',
   UpdateQuery = '[Router] Update Query',
   UpdatePageOptions = '[Router] Update Page Options',
-  Initialize = '[Router] Initialize'
+  Initialize = '[Router] Initialize',
+  UpdateOrder = '[Router] OrderBy',
 };
 
 export class Go implements Action {
@@ -33,6 +34,12 @@ export class UpdateQuery implements Action {
   constructor(public query: string) { }
 }
 
+export class UpdateOrder implements Action {
+  readonly type = RouterActionTypes.UpdateOrder;
+
+  constructor(public sortBy: string, public sortDirection: string) { }
+}
+
 export class UpdatePageOptions implements Action {
   readonly type = RouterActionTypes.UpdatePageOptions;
 
@@ -51,4 +58,6 @@ export class Initialize implements Action {
   readonly type = RouterActionTypes.Initialize;
 }
 
-export type RouterAction = Go | SwitchTable | UpdateQuery | UpdatePageOptions | Back | Forward | Initialize;
+export type RouterAction = Go | SwitchTable
+  | UpdateQuery | UpdatePageOptions | UpdateOrder
+  | Back | Forward | Initialize;

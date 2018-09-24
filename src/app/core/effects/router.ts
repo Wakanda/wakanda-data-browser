@@ -20,6 +20,7 @@ import {
     UpdateQuery,
     RouterActionTypes,
     Initialize,
+    UpdateOrder,
 } from '../actions/router';
 
 import * as dataActions from '../actions/data';
@@ -70,7 +71,9 @@ export class RouterEffects {
                     ...currentParams,
                     table,
                     query,
-                    page: 0
+                    page: 0,
+                    sortby: "",
+                    sortdirection: "",
                 }
             });
         })
@@ -88,6 +91,23 @@ export class RouterEffects {
                 query: {
                     ...currentParams,
                     query
+                }
+            });
+        })
+    );
+
+    @Effect()
+    updateOrder$ = this.actions$.pipe(
+        ofType<UpdateOrder>(RouterActionTypes.UpdateOrder),
+        withLatestFrom(this.store$),
+        map(([action, state]: [UpdateOrder, State]) => {
+            let currentParams = state.router.state.queryParams;
+            return new Go({
+                path: [''],
+                query: {
+                    ...currentParams,
+                    sortby: action.sortBy,
+                    sortdirection: action.sortDirection,
                 }
             });
         })
@@ -164,6 +184,8 @@ export class RouterEffects {
                 let pageSize = parseInt(params.pageSize);
                 let pageIndex = parseInt(params.page);
                 let query = params.query || "";
+                let sortBy = params.sortby || "";
+                let sortDirection = params.sortdirection || "";
                 let tableName = params.table;
                 let length = state.data.length;
 
@@ -172,7 +194,9 @@ export class RouterEffects {
                     pageSize,
                     length,
                     tableName,
-                    query
+                    query,
+                    sortBy,
+                    sortDirection,
                 }));
 
                 return new dataActions.Fetch();
