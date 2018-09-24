@@ -41,8 +41,11 @@ export class DataEffects {
 
         return from(this.wakanda.getCatalog())
             .pipe(catchError(error => {
+                this.store$.dispatch(new layoutActions.Loading(false));
                 if (isAuthError(error)) {
                     this.store$.dispatch(new layoutActions.ShowLogin());
+                } else {
+                    this.store$.dispatch(new layoutActions.ServerConnectionError());
                 }
 
                 return NOPE_OBSERVABLE;

@@ -12,6 +12,7 @@ export enum LayoutActionTypes {
     ShowAddRow = '[Layout] Show Add Row',
     HideAddRow = '[Layout] Hide Add Row',
     ServerError = '[Layout] Server Error',
+    ServerConnectionError = '[Layout] Server Connection Error',
     Loading = '[Layout] Loading',
 }
 
@@ -70,7 +71,7 @@ interface ServerErr {
     message: string,
     callToAction?: string,
     operation: { description: string },
-    options?: { noActions?: boolean }
+    options?: { noActions?: boolean, disableClose?: boolean }
 }
 export class ServerError implements Action {
     readonly type = LayoutActionTypes.ServerError;
@@ -98,9 +99,13 @@ export class ServerError implements Action {
     }
 }
 
+export class ServerConnectionError implements Action {
+    readonly type = LayoutActionTypes.ServerConnectionError;
+}
+
 export type LayoutAction = OpenSidenav | CloseSidenav | ToggleSidenav
     | ShowLogin | HideLogin | LoginSuccess | LoginFailure
     | ShowAddRow | HideAddRow
     | ShowImage
-    | ServerError
+    | ServerError | ServerConnectionError
     | Loading;

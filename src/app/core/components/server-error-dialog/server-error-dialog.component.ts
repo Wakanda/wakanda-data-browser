@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 interface Options {
   noActions?: boolean;
+  disableClose?: boolean;
 }
 
 export interface DialogData {
@@ -21,7 +22,8 @@ export interface DialogData {
 export class ServerErrorDialogComponent implements OnInit {
 
   options: Options = {
-    noActions: false
+    noActions: false,
+    disableClose: false
   };
 
   constructor(
@@ -31,11 +33,13 @@ export class ServerErrorDialogComponent implements OnInit {
     this.data = this.data || <DialogData>{ operation: {} };
     this.data.title = (typeof this.data.title === 'string') ? this.data.title : 'Server Error';
     let receivedOptions = this.data.options || {};
-
+    
     this.options = {
       ...this.options,
       ...receivedOptions
     };
+
+    this.dialogRef.disableClose = this.options.disableClose;
   }
 
   ngOnInit() {

@@ -119,18 +119,26 @@ export class RouterEffects {
         ofType<Initialize>(RouterActionTypes.Initialize),
         switchMap(action => {
             return from(this.wakanda.getCatalog())
-                .pipe(catchError(() => {
-                    return of({ error: true });
+                .pipe(catchError((e) => {
+                    return of({
+                        error: true,
+                        data: {
+                            type: e.statusCode === 0 ? "CONNECTION" : "LOGIN",
+                            error: e
+                        }
+                    });
                 }));
         }),
         withLatestFrom(this.store$),
-        map(([catalog, store]) => {
-            if (catalog.error) {
+        map(([response, store]) => {
+            if (response.error && response.data.type === "LOGIN") {
                 return new layoutActions.ShowLogin();
+            } else if (response.error && response.data.type === "CONNECTION") {
+                return new layoutActions.ServerConnectionError();
             } else if (store.router.state.queryParams.table) {
                 return new dataActions.Fetch();
             } else {
-                return new SwitchTable({ table: Object.keys(catalog)[0] });
+                return new SwitchTable({ table: Object.keys(response)[0] });
             }
         })
     );

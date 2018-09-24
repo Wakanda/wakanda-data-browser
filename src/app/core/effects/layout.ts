@@ -13,6 +13,7 @@ import {
     LoginSuccess,
     HideAddRow,
     ServerError,
+    ServerConnectionError,
 } from '../actions/layout';
 
 import * as data from '../actions/data';
@@ -81,6 +82,25 @@ export class LayoutEffects {
                     callToAction: action.callToAction
                 }
             });
+        })
+    );
+
+    @Effect()
+    serverConnectionError$ = this.actions$.pipe(
+        ofType<ServerConnectionError>(LayoutActionTypes.ServerConnectionError),
+        map(action => {
+            return new ServerError({
+                title: "Server Unavailable",
+                operation: {
+                    description: "Fetching the catalog"
+                },
+                message: "Connection refused.",
+                options: {
+                    noActions: true,
+                    disableClose: true
+                },
+                callToAction: `Make sure the server is running and accessible from your network.`
+            })
         })
     );
 
